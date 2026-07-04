@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre nosotros - Horus Uruguay</title>
+</head>
+<body>
+
+  <header>
+    <h1>Horus Uruguay</h1>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="/catalogo">Catálogo</a></li>
+      <li><a href="/foro">Foro de novedades</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- Sección Hero de bienvenida -->
+    <section id="hero" aria-labelledby="hero-titulo">
+      <h2 id="hero-titulo">Bienvenido a Horus Uruguay</h2>
+      <p>
+        Ropa pensada para quienes buscan estilo y comodidad en cada ocasión.
+        Descubrí nuestras colecciones y encontrá tu próxima prenda favorita.
+      </p>
+      <a href="/catalogo">
+        <button type="button">Ver catálogo</button>
+      </a>
+    </section>
+
+    <!-- Sección sobre el foro de novedades -->
+    <section id="foro-novedades" aria-labelledby="foro-titulo">
+      <h2 id="foro-titulo">Foro de novedades</h2>
+      <p>
+        Sumate a nuestra comunidad y enterate primero de los últimos lanzamientos,
+        promociones exclusivas y novedades de la marca. Compartí tu opinión y
+        conectá con otros clientes de horus.uy.
+      </p>
+      <a href="/foro">
+        <button type="button">Ir al foro</button>
+      </a>
+    </section>
+
+    <!-- Sección de reseñas -->
+    <section id="resenas" aria-labelledby="resenas-titulo">
+      <h2 id="resenas-titulo">Reseñas de nuestros clientes</h2>
+
+      <article>
+        <h3>Excelente calidad</h3>
+        <p>
+          "La tela es de primera calidad y el talle quedó justo como esperaba.
+          Sin dudas voy a volver a comprar."
+        </p>
+        <p>- Valentina R.</p>
+      </article>
+
+      <article>
+        <h3>Envío rápido</h3>
+        <p>
+          "Pedí un conjunto y llegó en menos de 48 horas. Todo perfecto y bien
+          embalado."
+        </p>
+        <p>- Martín G.</p>
+      </article>
+
+      <article>
+        <h3>Atención personalizada</h3>
+        <p>
+          "Tuve una duda con el talle y el asistente me ayudó al instante.
+          Muy buena experiencia de compra."
+        </p>
+        <p>- Camila F.</p>
+      </article>
+    </section>
+
+    <!-- Formulario de contacto -->
+    <section id="contacto" aria-labelledby="contacto-titulo">
+      <h2 id="contacto-titulo">Contacto</h2>
+
+      <form action="/enviar-contacto" method="post">
+        <div>
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+
+        <div>
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+        </div>
+
+        <button type="submit">Enviar mensaje</button>
+        <button type="button" id="btn-asistente-ia">o comunicarse con el asistente IA</button>
+      </form>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 horus.uy. Todos los derechos reservados.</p>
+    <nav aria-label="Redes sociales">
+      <ul>
+        <li><a href="https://instagram.com/horus.uy" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="https://facebook.com/horus.uy" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+        <li><a href="https://tiktok.com/@horus.uy" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+</body>
+</html>
