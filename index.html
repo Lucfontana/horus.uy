@@ -84,31 +84,17 @@
 
         <div class="reviews">
           <article class="review-card">
-            <h3>Excelente calidad</h3>
-            <p>
+            <h3 id="title-review">Excelente calidad</h3>
+            <p id="content-review">
               La tela es de primera calidad y el talle quedó justo como esperaba.
               Sin dudas voy a volver a comprar.
             </p>
             <p class="review-card__author">— Valentina R.</p>
           </article>
 
-          <article class="review-card">
-            <h3>Envío rápido</h3>
-            <p>
-              Pedí un conjunto y llegó en menos de 48 horas. Todo perfecto y bien
-              embalado.
-            </p>
-            <p class="review-card__author">— Martín G.</p>
-          </article>
-
-          <article class="review-card">
-            <h3>Atención personalizada</h3>
-            <p>
-              Tuve una duda con el talle y el asistente me ayudó al instante.
-              Muy buena experiencia de compra.
-            </p>
-            <p class="review-card__author">— Camila F.</p>
-          </article>
+          <button id="prev">Anterior</button>
+          <div id="nav_reviews"></div>
+          <button id="next">Siguiente</button>
         </div>
       </div>
     </section>
@@ -139,7 +125,7 @@
 
             <div class="contact-form__actions">
               <button type="submit" class="btn-action btn-action--primary">Enviar mensaje</button>
-              <p> O </p>
+              <p class="contact-form__or"> O </p>
               <button type="button" id="btn-asistente-ia" class="btn-action btn-action--assistant">Hablar con el asistente IA</button>
             </div>
           </fieldset>
