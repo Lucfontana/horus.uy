@@ -66,6 +66,7 @@ if ('IntersectionObserver' in window) {
 
 // CARRUSEL
 
+//Datos hardcodeados de reseñas actuales, podrían ser un fetch a la BD más adelante
 let dataCarrusel = {
   resenas: [
     {
@@ -93,12 +94,14 @@ let dataCarrusel = {
 
 currentIndex = 0;
 
+//Crea los puntitos de la navegación para moverse entre las reseñas dinamicamente
 let navReviews = document.getElementById('nav_reviews');
 
 function fillNavReviews(dataCarrusel, navReviews){
   let largo = dataCarrusel.resenas.length;
 
   for(let i = 0; i < largo; i++){
+    //Por cada indice de dataCarrusel, crea un puntito para naveghar entre las reseñas
     let dot = document.createElement('div');
     dot.innerHTML = ".";
     dot.id = i;
@@ -107,6 +110,7 @@ function fillNavReviews(dataCarrusel, navReviews){
   }
 }
 
+//Actualiza la información del carrusel
 function updateCarrusel(dataCarrusel, item){
   let buttonPrev = document.getElementById('prev');
   let buttonNext = document.getElementById('next');
@@ -139,6 +143,7 @@ function updateCarrusel(dataCarrusel, item){
 let buttonPrev = document.getElementById('prev');
 let buttonNext = document.getElementById('next');
 
+//Event listeners para los botones prev y next
 buttonPrev.addEventListener('click', () => {
   updateCarrusel(dataCarrusel, currentIndex - 1);
 });
@@ -154,11 +159,3 @@ navReviews.addEventListener('click', (event) => {
     updateCarrusel(dataCarrusel, event.target.id);
   }
 });
-          // <article class="review-card">
-          //   <h3>Envío rápido</h3>
-          //   <p>
-          //     Pedí un conjunto y llegó en menos de 48 horas. Todo perfecto y bien
-          //     embalado.
-          //   </p>
-          //   <p class="review-card__author">— Martín G.</p>
-          // </article>

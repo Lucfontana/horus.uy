@@ -503,6 +503,102 @@ main {
   box-shadow: 0 16px 34px -18px rgba(184, 154, 75, 0.5);
 }
 
+/* ===== Navegación del carrusel de reseñas ===== */
+.navResenas {
+  width: 100%;
+  margin-top: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+}
+
+.review-nav-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0; /* oculta visualmente "Anterior"/"Siguiente" sin sacarlo del DOM */
+  transition: border-color 0.35s var(--ease),
+              transform 0.35s var(--ease),
+              box-shadow 0.35s var(--ease),
+              background 0.35s var(--ease);
+}
+
+.review-nav-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border-top: 2px solid var(--gold-light);
+  border-right: 2px solid var(--gold-light);
+  transition: border-color 0.35s var(--ease);
+}
+
+#prev.review-nav-btn::before {
+  transform: translate(-50%, -50%) rotate(-135deg); /* flecha hacia la izquierda */
+}
+
+#next.review-nav-btn::before {
+  transform: translate(-50%, -50%) rotate(45deg); /* flecha hacia la derecha */
+}
+
+.review-nav-btn:hover,
+.review-nav-btn:focus-visible {
+  border-color: var(--gold);
+  background: var(--bg-alt);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -14px rgba(184, 154, 75, 0.55);
+  outline: none;
+}
+
+.review-nav-btn:hover::before,
+.review-nav-btn:focus-visible::before {
+  border-color: var(--gold);
+}
+
+.review-nav-btn:active {
+  transform: translateY(0);
+}
+
+/* Puntitos de navegación */
+#nav_reviews {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  font-size: 0; /* oculta el "." que mete tu JS en el innerHTML */
+  cursor: pointer;
+  transition: background 0.35s var(--ease),
+              transform 0.35s var(--ease),
+              box-shadow 0.35s var(--ease);
+}
+
+.dot:hover {
+  background: var(--gold-dim);
+  transform: scale(1.2);
+}
+
+.dot.active {
+  background: var(--gold);
+  transform: scale(1.35);
+  box-shadow: 0 0 0 3px rgba(184, 154, 75, 0.18);
+}
+
 /* =========================================================
    Contacto
    ========================================================= */
