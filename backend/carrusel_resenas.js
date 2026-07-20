@@ -1,69 +1,3 @@
-// ---------- Hamburger menu ----------
-const navToggle = document.getElementById('nav-toggle');
-const navClose = document.getElementById('nav-close');
-const nav = document.getElementById('nav');
-const navOverlay = document.getElementById('nav-overlay');
-
-function closeNav() {
-  nav.classList.remove('is-open');
-  navOverlay.classList.remove('is-active');
-  navToggle.setAttribute('aria-expanded', 'false');
-}
-
-function toggleNav() {
-  const isOpen = nav.classList.toggle('is-open');
-  navOverlay.classList.toggle('is-active', isOpen);
-  navToggle.setAttribute('aria-expanded', String(isOpen));
-}
-
-navToggle.addEventListener('click', toggleNav);
-navClose.addEventListener('click', closeNav);
-navOverlay.addEventListener('click', closeNav);
-
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && nav.classList.contains('is-open')) closeNav();
-});
-
-nav.querySelectorAll('a').forEach((link) => {
-  link.addEventListener('click', closeNav);
-});
-
-window.addEventListener('resize', () => {
-  if (window.innerWidth > 700) closeNav();
-});
-
-// ---------- Header background on scroll ----------
-const header = document.getElementById('site-header');
-
-function updateHeader() {
-  header.classList.toggle('is-scrolled', window.scrollY > 40);
-}
-updateHeader();
-window.addEventListener('scroll', updateHeader, { passive: true });
-
-// ---------- Scroll-reveal ----------
-const revealEls = document.querySelectorAll('.reveal');
-
-if ('IntersectionObserver' in window) {
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.2 }
-  );
-
-  revealEls.forEach((el) => observer.observe(el));
-} else {
-  revealEls.forEach((el) => el.classList.add('is-visible'));
-}
-
-
-
 // CARRUSEL
 
 //Datos hardcodeados de reseñas actuales, podrían ser un fetch a la BD más adelante
@@ -94,9 +28,10 @@ let dataCarrusel = {
 
 currentIndex = 0;
 
-//Crea los puntitos de la navegación para moverse entre las reseñas dinamicamente
+
 let navReviews = document.getElementById('nav_reviews');
 
+//Crea los puntitos de la navegación para moverse entre las reseñas dinamicamente
 function fillNavReviews(dataCarrusel, navReviews){
   let largo = dataCarrusel.resenas.length;
 
@@ -110,11 +45,14 @@ function fillNavReviews(dataCarrusel, navReviews){
   }
 }
 
+//Se rellena automaticamente al iniciar la página
 fillNavReviews(dataCarrusel, navReviews); 
-updateCarrusel(dataCarrusel, 0); // NUEVO: pinta el estado inicial (reseña 0, dot activo, prev deshabilitado)
+updateCarrusel(dataCarrusel, 0);
 
 //Actualiza la información del carrusel
 function updateCarrusel(dataCarrusel, item){
+
+  //Se traen los elementos del index a modificar
   let buttonPrev = document.getElementById('prev');
   let buttonNext = document.getElementById('next');
 
@@ -126,6 +64,7 @@ function updateCarrusel(dataCarrusel, item){
   let author = document.querySelector('.review-card__author');
   currentIndex = item;
   
+  //Deshabilita/habilita los botones prev/next segun la posicion
   if (item === 0){
     buttonPrev.disabled = true;
     buttonPrev.classList.add("disabilitado");
@@ -133,6 +72,7 @@ function updateCarrusel(dataCarrusel, item){
     buttonPrev.disabled = false;
     buttonPrev.classList.remove("disabilitado");
   }
+
   if (item === dataCarrusel.resenas.length - 1){
     buttonNext.disabled = true;
     buttonNext.classList.add("disabilitado");
@@ -141,9 +81,13 @@ function updateCarrusel(dataCarrusel, item){
     buttonNext.classList.remove("disabilitado");
   }
 
+  //Le saca la clase .active a todos los dot
   document.querySelectorAll('.dot').forEach(dot => dot.classList.remove('active'));
+
+  //Trae el elemento actual (lo trae segun el item actual) y se le añade la clase active
   document.getElementById(`${item}dot`).classList.add('active');
 
+  //Actualiza contenido
   title.textContent = dataCarrusel.resenas[item].title;
   content.textContent = dataCarrusel.resenas[item].content;
   author.textContent = dataCarrusel.resenas[item].author;
@@ -160,8 +104,6 @@ buttonPrev.addEventListener('click', () => {
 buttonNext.addEventListener('click', () => {
   updateCarrusel(dataCarrusel, currentIndex + 1);
 });
-
-// fillNavReviews(dataCarrusel, navReviews);
 
 //Actualizar las reseñas según botoncito apretado
 navReviews.addEventListener('click', (event) => {
