@@ -104,11 +104,14 @@ function fillNavReviews(dataCarrusel, navReviews){
     //Por cada indice de dataCarrusel, crea un puntito para naveghar entre las reseñas
     let dot = document.createElement('div');
     dot.innerHTML = ".";
-    dot.id = i;
+    dot.id = `${i}dot`;
     dot.classList.add('dot');
     navReviews.appendChild(dot);
   }
 }
+
+fillNavReviews(dataCarrusel, navReviews); 
+updateCarrusel(dataCarrusel, 0); // NUEVO: pinta el estado inicial (reseña 0, dot activo, prev deshabilitado)
 
 //Actualiza la información del carrusel
 function updateCarrusel(dataCarrusel, item){
@@ -125,14 +128,21 @@ function updateCarrusel(dataCarrusel, item){
   
   if (item === 0){
     buttonPrev.disabled = true;
+    buttonPrev.classList.add("disabilitado");
   } else {
     buttonPrev.disabled = false;
+    buttonPrev.classList.remove("disabilitado");
   }
   if (item === dataCarrusel.resenas.length - 1){
     buttonNext.disabled = true;
+    buttonNext.classList.add("disabilitado");
   } else {
     buttonNext.disabled = false;
+    buttonNext.classList.remove("disabilitado");
   }
+
+  document.querySelectorAll('.dot').forEach(dot => dot.classList.remove('active'));
+  document.getElementById(`${item}dot`).classList.add('active');
 
   title.textContent = dataCarrusel.resenas[item].title;
   content.textContent = dataCarrusel.resenas[item].content;
@@ -151,7 +161,7 @@ buttonNext.addEventListener('click', () => {
   updateCarrusel(dataCarrusel, currentIndex + 1);
 });
 
-fillNavReviews(dataCarrusel, navReviews);
+// fillNavReviews(dataCarrusel, navReviews);
 
 //Actualizar las reseñas según botoncito apretado
 navReviews.addEventListener('click', (event) => {

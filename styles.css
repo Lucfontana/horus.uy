@@ -476,6 +476,7 @@ main {
 }
 
 .review-card {
+  min-height: 270px;
   flex: 1 1 300px;
   max-width: 340px;
   background: var(--bg-card);
@@ -597,6 +598,16 @@ main {
   background: var(--gold);
   transform: scale(1.35);
   box-shadow: 0 0 0 3px rgba(184, 154, 75, 0.18);
+}
+
+.disabilitado{
+  color: grey;
+  transition: none !important;
+}
+
+.disabilitado:hover{
+  transform: none !important;
+  background: none !important;
 }
 
 /* =========================================================
