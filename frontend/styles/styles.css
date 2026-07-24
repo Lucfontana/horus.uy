@@ -460,7 +460,92 @@ main {
     radial-gradient(ellipse at 50% 0%, rgba(184,154,75,0.10), transparent 60%),
     var(--bg-alt);
 }
+/* =========================================================
+   Ubicación
+   ========================================================= */
+.section--ubicacion {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(184,154,75,0.08), transparent 60%),
+    var(--bg);
+}
 
+.ubicacion__grid {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: minmax(280px, 440px) 1fr;
+  gap: 3.5rem;
+  align-items: center;
+  text-align: left;
+}
+
+.ubicacion__text .lead {
+  max-width: 46ch;
+  margin: 0;
+}
+
+.ubicacion__direccion {
+  margin-top: 2.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 2px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.4rem 1.6rem;
+}
+
+.ubicacion__direccion-label {
+  font-size: 0.78rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 0.6rem;
+}
+
+.ubicacion__direccion-texto {
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.55;
+}
+
+.ubicacion__mapa {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-card);
+  transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+
+.ubicacion__mapa:hover,
+.ubicacion__mapa:focus-within {
+  border-color: var(--gold);
+  box-shadow: 0 16px 34px -18px rgba(184, 154, 75, 0.5);
+}
+
+.ubicacion__mapa iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  filter: grayscale(0.25) contrast(1.05);
+}
+
+@media (max-width: 860px) {
+  .ubicacion__grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .ubicacion__text .lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ubicacion__direccion {
+    text-align: left;
+  }
+  .ubicacion__mapa {
+    aspect-ratio: 16 / 10;
+  }
+}
 /* =========================================================
    Reseñas
    ========================================================= */
