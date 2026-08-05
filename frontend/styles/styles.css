@@ -558,12 +558,38 @@ main {
   justify-content: center;
   align-items: center;
   gap: 1.75rem;
+  padding: 30px;
 }
 
-.review-card {
-  min-height: 270px;
+/* Contenedor que recorta el deslizamiento */
+.review-viewport {
+  position: relative;
+  /* overflow: hidden; */
   flex: 1 1 300px;
   max-width: 340px;
+  border-radius: 4px;
+  /* la altura (min-height) se fija dinámicamente por JS según la reseña más larga */
+}
+
+/* Cada "slide" es el que se mueve horizontalmente dentro del viewport */
+.review-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s var(--ease);
+}
+
+.review-slide--enter-next { transform: translateX(100%); }
+.review-slide--enter-prev { transform: translateX(-100%); }
+.review-slide--exit-next  { transform: translateX(-100%); }
+.review-slide--exit-prev  { transform: translateX(100%); }
+.review-slide--center     { transform: translateX(0); }
+
+.review-card {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
   background: var(--bg-card);
   border: 1px solid var(--border-soft);
   border-radius: 4px;
@@ -610,7 +636,7 @@ main {
   border: 1px solid var(--border);
   border-radius: 50%;
   cursor: pointer;
-  font-size: 0; /* oculta visualmente "Anterior"/"Siguiente" sin sacarlo del DOM */
+  font-size: 0;
   transition: border-color 0.35s var(--ease),
               transform 0.35s var(--ease),
               box-shadow 0.35s var(--ease),
@@ -630,11 +656,11 @@ main {
 }
 
 #prev.review-nav-btn::before {
-  transform: translate(-50%, -50%) rotate(-135deg); /* flecha hacia la izquierda */
+  transform: translate(-50%, -50%) rotate(-135deg);
 }
 
 #next.review-nav-btn::before {
-  transform: translate(-50%, -50%) rotate(45deg); /* flecha hacia la derecha */
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .review-nav-btn:hover,
@@ -655,7 +681,6 @@ main {
   transform: translateY(0);
 }
 
-/* Puntitos de navegación */
 #nav_reviews {
   display: flex;
   align-items: center;
@@ -667,7 +692,7 @@ main {
   height: 8px;
   border-radius: 50%;
   background: var(--text-dim);
-  font-size: 0; /* oculta el "." que mete tu JS en el innerHTML */
+  font-size: 0;
   cursor: pointer;
   transition: background 0.35s var(--ease),
               transform 0.35s var(--ease),
@@ -710,7 +735,6 @@ main {
 .review-nav-btn.disabilitado:focus-visible::before {
   border-color: var(--text-dim);
 }
-
 /* =========================================================
    Contacto
    ========================================================= */

@@ -103,21 +103,31 @@
       </div>
     </section>
 
-    <!-- Sección de reseñas -->
     <section id="resenas" class="section section--resenas" aria-labelledby="resenas-titulo">
       <div class="section__inner reveal">
         <p class="eyebrow">Testimonios</p>
         <h2 id="resenas-titulo">Reseñas de nuestros clientes</h2>
 
         <div class="reviews">
-          <article class="review-card">
-            <h3 id="title-review">Excelente calidad</h3>
-            <p id="content-review">
-              La tela es de primera calidad y el talle quedó justo como esperaba.
-              Sin dudas voy a volver a comprar.
-            </p>
-            <p class="review-card__author" id="author-review">— Valentina R.</p>
-          </article>
+
+          <!-- ventana visible del carrusel -->
+          <!-- Su altura se calcula dinamicamente en el js -->
+          <div class="review-viewport" id="review-viewport">
+
+            <!-- Review-slide tiene las animaciones de deslizarse, review-card las animaciones de hover, 
+                 los transform se sobrepondrian si solo se manejara una capa-->
+            <div class="review-slide">
+              <article class="review-card">
+                <h3 class="review-card__title">Excelente calidad</h3>
+                <p class="review-card__content">
+                  La tela es de primera calidad y el talle quedó justo como esperaba.
+                  Sin dudas voy a volver a comprar.
+                </p>
+                <p class="review-card__author">— Valentina R.</p>
+              </article>
+            </div>
+          </div>
+
           <div class="navResenas">
             <button id="prev" class="review-nav-btn" aria-label="Reseña anterior">Anterior</button>
             <div id="nav_reviews"></div>
@@ -176,5 +186,6 @@
 
   <script src="../backend/navbar.js"></script>
   <script src="../backend/carrusel_resenas.js"></script>
+  <script src="../backend/calculos.js"></script>
 </body>
 </html>
