@@ -2,6 +2,15 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+<script>
+  (function () {
+    try {
+      if (localStorage.getItem('horus-theme') === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    } catch (e) {}
+  })();
+</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sobre nosotros - Horus Uruguay</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,11 +39,30 @@
         </ul>
       </nav>
 
-      <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú de navegación">
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-      </button>
+      <div class="site-header__actions">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-pressed="false" aria-label="Cambiar a modo claro">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="12" y1="2" x2="12" y2="4.5"></line>
+            <line x1="12" y1="19.5" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="4.5" y2="12"></line>
+            <line x1="19.5" y1="12" x2="22" y2="12"></line>
+            <line x1="4.9" y1="4.9" x2="6.6" y2="6.6"></line>
+            <line x1="17.4" y1="17.4" x2="19.1" y2="19.1"></line>
+            <line x1="4.9" y1="19.1" x2="6.6" y2="17.4"></line>
+            <line x1="17.4" y1="6.6" x2="19.1" y2="4.9"></line>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú de navegación">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -184,6 +212,7 @@
     </nav>
   </footer>
 
+  <script src="../backend/theme.js"></script>
   <script src="../backend/navbar.js"></script>
   <script src="../backend/carrusel_resenas.js"></script>
   <script src="../backend/calculos.js"></script>

@@ -2,6 +2,7 @@
    Horus Uruguay — Design tokens
    ========================================================= */
 :root {
+  --nav-bg:      rgb(9, 9, 11);
   --bg:          #0a0a0c;
   --bg-alt:      #121216;
   --bg-card:     #17171d;
@@ -26,8 +27,32 @@
   --header-h: 84px;
 
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --heading:     var(--gold-light);
+  --eyebrow:     var(--gold);
+  --input-bg:    #0e0e12;
+  --footer-bg:   #08080a;
 }
 
+/* =========================================================
+   Modo claro
+   ========================================================= */
+:root[data-theme="light"] {
+  --bg:          #f6f2e7;
+  --bg-alt:      #efe9da;
+  --bg-card:     #ffffff;
+  --border:      rgba(184, 154, 75, 0.35);
+  --border-soft: rgba(20, 15, 8, 0.08);
+
+  --text:        #211d15;
+  --text-muted:  #5c5546;
+  --text-dim:    #96907e;
+
+  --heading:     #8a6f28;
+  --eyebrow:     #7d6222;
+  --input-bg:    #fffdf8;
+  --footer-bg:   #efe6d2;
+}
 /* =========================================================
    Reset & base
    ========================================================= */
@@ -60,7 +85,7 @@ ul { list-style: none; margin: 0; padding: 0; }
 h1, h2, h3 {
   font-family: var(--font-display);
   font-weight: 600;
-  color: var(--gold-light);
+  color: var(--heading);
   margin: 0;
 }
 
@@ -149,8 +174,11 @@ main {
   height: var(--header-h);
   z-index: 100;
   background: linear-gradient(to bottom, rgba(10,10,12,0.9), rgba(10,10,12,0.55) 70%, transparent);
+  background-color: var(--nav-bg);
   transition: background-color 0.4s var(--ease), border-color 0.4s var(--ease);
   border-bottom: 1px solid transparent;
+  --border: rgba(184, 154, 75, 0.22);
+  --text: #ede8dc;
 }
 
 .site-header.is-scrolled {
@@ -256,6 +284,47 @@ main {
 }
 
 .nav-close { display: none; }
+
+/* =========================================================
+   Botón de modo claro/oscuro
+   ========================================================= */
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  color: var(--gold-light);
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), background 0.25s var(--ease);
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  border-color: var(--gold-light);
+  background: rgba(184, 154, 75, 0.1);
+  transform: scale(1.045);
+  outline: none;
+}
+
+.theme-toggle__icon {
+  width: 18px;
+  height: 18px;
+  display: none;
+}
+
+:root:not([data-theme="light"]) .theme-toggle__icon--sun { display: block; }
+:root[data-theme="light"] .theme-toggle__icon--moon { display: block; }
 
 @media (max-width: 700px) {
   .nav-toggle { display: flex; }
@@ -375,6 +444,8 @@ main {
   background-size: cover;
   background-position: center;
   overflow: hidden;
+  --text: #ede8dc;
+  --text-muted: #a39d8f;
 }
 
 .hero__scrim {
@@ -773,7 +844,7 @@ main {
 .field input,
 .field textarea {
   width: 100%;
-  background: #0e0e12;
+  background: var(--input-bg);
   border: 1px solid var(--border-soft);
   border-radius: 3px;
   padding: 0.85rem 1rem;
@@ -842,7 +913,7 @@ main {
   width: 100%;
   padding: 2.6rem 1.5rem;
   text-align: center;
-  background: #08080a;
+  background: var(--footer-bg);
   border-top: 1px solid var(--border-soft);
   color: var(--text-dim);
   font-size: 0.85rem;
