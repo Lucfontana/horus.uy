@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('horus-theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo - Horus Uruguay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="styles/catalog_styles.css">
+</head>
+<body>
+
+  <header class="site-header" id="site-header">
+    <div class="site-header__inner">
+      <a href="/frontend/index.html" class="brand" aria-label="Horus Uruguay - Inicio">
+        <img src="src/logo.png" alt="Logo Horus Uruguay" id="logo">
+      </a>
+
+      <nav class="nav" id="nav">
+        <button type="button" class="nav-close" id="nav-close" aria-label="Cerrar menú de navegación">
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="nav__catalog-content">
+          <form class="nav-search" role="search" action="#" onsubmit="return false;">
+            <svg class="nav-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="search" name="q" placeholder="Buscar productos…" aria-label="Buscar productos">
+          </form>
+        </div>
+      </nav>
+
+      <div class="site-header__actions">
+        <button type="button" class="icon-btn" id="cart-btn" aria-label="Ver carrito (2 productos)" style="position: relative;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 7h12l-1 13H7L6 7Z"></path>
+            <path d="M9 7a3 3 0 0 1 6 0"></path>
+          </svg>
+          <span class="icon-btn__badge">2</span>
+        </button>
+
+        <button type="button" class="icon-btn" id="profile-btn" aria-label="Mi cuenta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.5"></circle>
+            <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Cambiar a modo claro">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="12" y1="2" x2="12" y2="4.5"></line>
+            <line x1="12" y1="19.5" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="4.5" y2="12"></line>
+            <line x1="19.5" y1="12" x2="22" y2="12"></line>
+            <line x1="4.9" y1="4.9" x2="6.6" y2="6.6"></line>
+            <line x1="17.4" y1="17.4" x2="19.1" y2="19.1"></line>
+            <line x1="4.9" y1="19.1" x2="6.6" y2="17.4"></line>
+            <line x1="17.4" y1="6.6" x2="19.1" y2="4.9"></line>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú de navegación">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="nav-overlay" id="nav-overlay"></div>
+
+  <main class="catalog-main">
+
+    <nav class="catalog-categories" aria-label="Categorías destacadas">
+      <ul>
+        <li><a href="#" class="is-active">Mujer</a></li>
+        <li><a href="#">Hombre</a></li>
+        <li><a href="#">Ofertas</a></li>
+        <li><a href="#">Niños</a></li>
+        <li><a href="#">Accesorios</a></li>
+      </ul>
+    </nav>
+
+    <div class="catalog-layout">
+
+      <!-- ============ FILTROS ============ -->
+      <aside class="filters" id="filters">
+        <div class="filters__sticky">
+          <p class="eyebrow">Filtros</p>
+          <h2 class="filters__title">Refinar búsqueda</h2>
+          <p class="filters__subtitle">Encontrá tu prenda ideal.</p>
+
+          <!-- Categoría -->
+          <div class="filter-group" data-filter-group>
+            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-categoria">
+              <span>Categoría</span>
+              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="filter-group__panel" id="panel-categoria">
+              <div class="filter-group__panel-inner">
+                <ul class="filter-checklist">
+                  <li><label><input type="checkbox" name="categoria" value="abrigos"> Abrigos</label></li>
+                  <li><label><input type="checkbox" name="categoria" value="calzado"> Calzado</label></li>
+                  <li><label><input type="checkbox" name="categoria" value="camisas"> Camisas</label></li>
+                  <li><label><input type="checkbox" name="categoria" value="camisetas"> Camisetas</label></li>
+                  <li><label><input type="checkbox" name="categoria" value="chalecos"> Chalecos</label></li>
+                  <li><label><input type="checkbox" name="categoria" value="pantalones"> Pantalones</label></li>
+                  <li><label><input type="checkbox" name="categoria" value="vestidos"> Vestidos</label></li>
+                  <li><label><input type="checkbox" name="categoria" value="accesorios"> Accesorios</label></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color -->
+          <div class="filter-group" data-filter-group>
+            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-color">
+              <span>Color</span>
+              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="filter-group__panel" id="panel-color">
+              <div class="filter-group__panel-inner">
+                <div class="swatches">
+                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#1a1a1a" aria-label="Negro" title="Negro"></button>
+                  <button type="button" class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#f5f5f0" aria-label="Blanco" title="Blanco"></button>
+                  <button type="button" class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#d8c9a8" aria-label="Beige" title="Beige"></button>
+                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#b98d54" aria-label="Camel" title="Camel"></button>
+                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#4a5c45" aria-label="Verde" title="Verde"></button>
+                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#33475b" aria-label="Azul" title="Azul"></button>
+                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#6b2737" aria-label="Bordó" title="Bordó"></button>
+                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#8a8a86" aria-label="Gris" title="Gris"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Precio -->
+          <div class="filter-group" data-filter-group>
+            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-precio">
+              <span>Precio</span>
+              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="filter-group__panel" id="panel-precio">
+              <div class="filter-group__panel-inner">
+                <div class="price-range" id="price-range">
+                  <div class="price-range__labels">
+                    <span id="price-min-label">$499</span>
+                    <span id="price-max-label">$3.200</span>
+                  </div>
+                  <div class="price-range__track">
+                    <div class="price-range__fill"></div>
+                    <div class="price-range__fill-active" id="price-fill-active"></div>
+                    <input type="range" id="price-min" min="499" max="3200" step="10" value="499" aria-label="Precio mínimo">
+                    <input type="range" id="price-max" min="499" max="3200" step="10" value="3200" aria-label="Precio máximo">
+                  </div>
+                  <div class="price-range__inputs">
+                    <div class="field-mini">
+                      <label for="price-min-input">Min</label>
+                      <input type="number" id="price-min-input" value="499" min="499" max="3200">
+                    </div>
+                    <div class="field-mini">
+                      <label for="price-max-input">Max</label>
+                      <input type="number" id="price-max-input" value="3200" min="499" max="3200">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Talle -->
+          <div class="filter-group" data-filter-group>
+            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-talle">
+              <span>Talle</span>
+              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="filter-group__panel" id="panel-talle">
+              <div class="filter-group__panel-inner">
+                <div class="size-chips">
+                  <button type="button" class="chip" data-chip-toggle>XS</button>
+                  <button type="button" class="chip" data-chip-toggle>S</button>
+                  <button type="button" class="chip" data-chip-toggle>M</button>
+                  <button type="button" class="chip" data-chip-toggle>L</button>
+                  <button type="button" class="chip" data-chip-toggle>XL</button>
+                  <button type="button" class="chip" data-chip-toggle>XXL</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn-action btn-action--primary filters__apply">Aplicar filtros</button>
+        </div>
+      </aside>
+
+      <!-- ============ RESULTADOS ============ -->
+      <section class="catalog-results" aria-labelledby="catalog-title">
+        <div class="catalog-toolbar">
+          <div>
+            <h1 id="catalog-title">Catálogo</h1>
+            <p class="catalog-subtitle">Descubrí nuestra exclusiva colección.</p>
+          </div>
+
+          <div class="sort-control">
+            <label for="sort">Ordenar por</label>
+            <select id="sort">
+              <option>Lo más nuevo</option>
+              <option>Precio: menor a mayor</option>
+              <option>Precio: mayor a menor</option>
+              <option>Más vendidos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="product-grid" id="product-grid">
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <span class="product-card__badge">Nuevo</span>
+              <img class="product-card__img--base" src="/frontend/src/abrigo-lana-camel-a.jpg" alt="Abrigo Lana Camel">
+              <img class="product-card__img--alt" src="/frontend/src/abrigo-lana-camel-b.jpg" alt="Abrigo Lana Camel, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Abrigo Lana Camel</h3>
+              <p class="product-card__category">Abrigos</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$3.200</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Abrigo Lana Camel al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/camisa-lino-blanca-a.jpg" alt="Camisa Lino Blanca">
+              <img class="product-card__img--alt" src="/frontend/src/camisa-lino-blanca-b.jpg" alt="Camisa Lino Blanca, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Camisa Lino Blanca</h3>
+              <p class="product-card__category">Camisas</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$1.450</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Camisa Lino Blanca al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/camiseta-basica-a.jpg" alt="Camiseta Básica Algodón">
+              <img class="product-card__img--alt" src="/frontend/src/camiseta-basica-b.jpg" alt="Camiseta Básica Algodón, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Camiseta Básica</h3>
+              <p class="product-card__category">Camisetas</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$650</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Camiseta Básica al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/botas-cuero-negras-a.jpg" alt="Botas Cuero Negras">
+              <img class="product-card__img--alt" src="/frontend/src/botas-cuero-negras-b.jpg" alt="Botas Cuero Negras, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Botas Cuero Negras</h3>
+              <p class="product-card__category">Calzado</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$2.900</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Botas Cuero Negras al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/chaleco-acolchado-a.jpg" alt="Chaleco Acolchado">
+              <img class="product-card__img--alt" src="/frontend/src/chaleco-acolchado-b.jpg" alt="Chaleco Acolchado, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Chaleco Acolchado</h3>
+              <p class="product-card__category">Chalecos</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$1.800</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Chaleco Acolchado al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/pantalon-sastre-gris-a.jpg" alt="Pantalón Sastre Gris">
+              <img class="product-card__img--alt" src="/frontend/src/pantalon-sastre-gris-b.jpg" alt="Pantalón Sastre Gris, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Pantalón Sastre Gris</h3>
+              <p class="product-card__category">Pantalones</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$1.950</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Pantalón Sastre Gris al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/vestido-midi-verde-a.jpg" alt="Vestido Midi Verde">
+              <img class="product-card__img--alt" src="/frontend/src/vestido-midi-verde-b.jpg" alt="Vestido Midi Verde, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Vestido Midi Verde</h3>
+              <p class="product-card__category">Vestidos</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$2.400</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Vestido Midi Verde al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card">
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/cinturon-cuero-bordo-a.jpg" alt="Cinturón Cuero Bordó">
+              <img class="product-card__img--alt" src="/frontend/src/cinturon-cuero-bordo-b.jpg" alt="Cinturón Cuero Bordó, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Cinturón Cuero Bordó</h3>
+              <p class="product-card__category">Accesorios</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$890</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Cinturón Cuero Bordó al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Se revelan al hacer click en "Cargar más" -->
+          <article class="product-card is-hidden" data-extra-card>
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/camisa-denim-azul-a.jpg" alt="Camisa Denim Azul">
+              <img class="product-card__img--alt" src="/frontend/src/camisa-denim-azul-b.jpg" alt="Camisa Denim Azul, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Camisa Denim Azul</h3>
+              <p class="product-card__category">Camisas</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$1.680</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Camisa Denim Azul al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card is-hidden" data-extra-card>
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/zapatillas-urbanas-grises-a.jpg" alt="Zapatillas Urbanas Grises">
+              <img class="product-card__img--alt" src="/frontend/src/zapatillas-urbanas-grises-b.jpg" alt="Zapatillas Urbanas Grises, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Zapatillas Urbanas</h3>
+              <p class="product-card__category">Calzado</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$2.100</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Zapatillas Urbanas al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card is-hidden" data-extra-card>
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/buzo-oversize-gris-a.jpg" alt="Buzo Oversize Gris">
+              <img class="product-card__img--alt" src="/frontend/src/buzo-oversize-gris-b.jpg" alt="Buzo Oversize Gris, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Buzo Oversize Gris</h3>
+              <p class="product-card__category">Camisetas</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$980</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Buzo Oversize Gris al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <article class="product-card is-hidden" data-extra-card>
+            <div class="product-card__media">
+              <img class="product-card__img--base" src="/frontend/src/panuelo-seda-estampado-a.jpg" alt="Pañuelo Seda Estampado">
+              <img class="product-card__img--alt" src="/frontend/src/panuelo-seda-estampado-b.jpg" alt="Pañuelo Seda Estampado, vista alternativa">
+            </div>
+            <div class="product-card__body">
+              <h3 class="product-card__name">Pañuelo Seda Estampado</h3>
+              <p class="product-card__category">Accesorios</p>
+              <div class="product-card__footer">
+                <span class="product-card__price">$560</span>
+                <button type="button" class="product-card__cart" aria-label="Agregar Pañuelo Seda Estampado al carrito">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>
+                </button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="catalog-load-more">
+          <button type="button" class="btn-load-more" id="btn-load-more">Cargar más</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 horus.uy. Todos los derechos reservados.</p>
+    <nav aria-label="Enlaces">
+      <ul>
+        <li><a href="index.html#contacto">Contacto</a></li>
+        <li><a href="index.html#ubicacion">Ubicación</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Redes sociales">
+      <ul>
+        <li><a href="https://instagram.com/horus.uy" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="https://facebook.com/horus.uy" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+        <li><a href="https://tiktok.com/@horus.uy" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+      </ul>
+    </nav>
+  </footer>
+
+  <script src="../backend/theme.js"></script>
+  <script src="../backend/navbar.js"></script>
+  <script src="../backend/catalogo.js"></script>
+</body>
+</html>
