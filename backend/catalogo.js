@@ -3,15 +3,18 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ============================================================
      Acordeón de filtros
      ============================================================ */
-  var groups = document.querySelectorAll('[data-filter-group]');
+  let groups = document.querySelectorAll('[data-filter-group]');
+
+  /* Formatea los grupos de categorias: 
+  Si no tiene botón de toggle o panel de categoría, lo saltea */
   groups.forEach(function (group) {
-    var toggle = group.querySelector('.filter-group__toggle');
-    var panel = group.querySelector('.filter-group__panel');
+    const toggle = group.querySelector('.filter-group__toggle');
+    const panel = group.querySelector('.filter-group__panel');
     if (!toggle || !panel) return;
 
     toggle.addEventListener('click', function () {
-      var expanded = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      let expanded = toggle.getAttribute('aria-expanded') === 'false';
+      toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
       panel.classList.toggle('is-collapsed', expanded);
     });
   });
