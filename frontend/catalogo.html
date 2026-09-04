@@ -143,16 +143,16 @@
             </button>
             <div class="filter-group__panel is-collapsed" id="panel-color">
               <div class="filter-group__panel-inner">
-                <div class="swatches">
-                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#1a1a1a" aria-label="Negro" title="Negro"></button>
-                  <button type="button" class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#f5f5f0" aria-label="Blanco" title="Blanco"></button>
-                  <button type="button" class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#d8c9a8" aria-label="Beige" title="Beige"></button>
-                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#b98d54" aria-label="Camel" title="Camel"></button>
-                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#4a5c45" aria-label="Verde" title="Verde"></button>
-                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#33475b" aria-label="Azul" title="Azul"></button>
-                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#6b2737" aria-label="Bordó" title="Bordó"></button>
-                  <button type="button" class="swatch" data-swatch-toggle style="--swatch-color:#8a8a86" aria-label="Gris" title="Gris"></button>
-                </div>
+                <ul class="filter-checklist swatches">
+                  <li><label><input type="checkbox" name="categoria" value="negro"> Negro <p class="swatch" data-swatch-toggle style="--swatch-color:#1a1a1a" aria-label="Negro"></p></label></li>
+                  <li><label><input type="checkbox" name="categoria" value="blanco"> Blanco <p class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#f5f5f0" aria-label="Blanco"></p></label></li>
+                  <li><label><input type="checkbox" name="categoria" value="beige"> Beige <p class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#d8c9a8" aria-label="Beige" ></p></label></li>
+                  <li><label><input type="checkbox" name="categoria" value="camel"> Camel <p class="swatch" data-swatch-toggle style="--swatch-color:#b98d54" aria-label="Camel"></p></label></li>
+                  <li><label><input type="checkbox" name="categoria" value="verde"> Verde <p class="swatch" data-swatch-toggle style="--swatch-color:#4a5c45" aria-label="Verde"></p></label></li>
+                  <li><label><input type="checkbox" name="categoria" value="azul"> Azul <p class="swatch" data-swatch-toggle style="--swatch-color:#33475b" aria-label="Azul"></p></label></li>
+                  <li><label><input type="checkbox" name="categoria" value="bordo"> Bordó <p class="swatch" data-swatch-toggle style="--swatch-color:#6b2737" aria-label="Bordó"></p></label></li>
+                  <li><label><input type="checkbox" name="categoria" value="gris"> Gris <p class="swatch" data-swatch-toggle style="--swatch-color:#8a8a86" aria-label="Gris"></p></label></li>
+                </ul>
               </div>
             </div>
           </div>
@@ -175,8 +175,8 @@
                   <div class="price-range__track">
                     <div class="price-range__fill"></div>
                     <div class="price-range__fill-active" id="price-fill-active"></div>
-                    <input type="range" id="price-min" min="499" max="3200" step="10" value="499" aria-label="Precio mínimo">
-                    <input type="range" id="price-max" min="499" max="3200" step="10" value="3200" aria-label="Precio máximo">
+                    <input type="range" id="price-min" min="499" max="3200" step="1" value="499" aria-label="Precio mínimo">
+                    <input type="range" id="price-max" min="499" max="3200" step="1" value="3200" aria-label="Precio máximo">
                   </div>
                   <div class="price-range__inputs">
                     <div class="field-mini">
@@ -269,7 +269,7 @@
 
   <script src="../backend/theme.js"></script>
   <script src="../backend/navbar.js"></script>
-  <script src="../backend/catalogo.js"></script>
-  <script src="../backend/load_products.js"></script>
+  <script type="module" src="../backend/catalogo.js"></script>
+  <script type="module" src="../backend/load_products.js"></script>
 </body>
 </html>

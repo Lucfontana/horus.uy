@@ -1,14 +1,20 @@
 document.addEventListener("DOMContentLoaded", load_items)
 
-async function load_items(){
-    console.log("Se cargo el DOM!");
+export async function fetch_products(){
     try {
-    const productos = await fetch("../backend/db/db.json");
-    const formatted_products = await productos.json();
-    
-    console.log(formatted_products);
+        const productos = await fetch("../backend/db/db.json");
+        return productos.json()
+    } catch (error) {
+        console.error(`Hubo un error: ${error}`)
+    }
+}
 
-    create_cards(Object.values(formatted_products.items));
+async function load_items(){
+    console.log("Se cargaron productos! (anda a saber donde)");
+    try {
+    const productos = await fetch_products();
+
+    create_cards(Object.values(productos.items));
     return;
  
     } catch (error) {

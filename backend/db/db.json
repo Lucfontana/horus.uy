@@ -131,6 +131,28 @@
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
             "alt": "Pañuelo Seda Estampado"
+        },
+        "13": {
+            "is_new": true,
+            "name": "Abrigo Lana Camel",
+            "categories": [
+                "Abrigos"
+            ],
+            "price": 2,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Abrigo Lana Camel"
+        },
+                "14": {
+            "is_new": true,
+            "name": "Abrigo Lana Camel",
+            "categories": [
+                "Abrigos"
+            ],
+            "price": 3500,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Abrigo Lana Camel"
         }
     }
 }

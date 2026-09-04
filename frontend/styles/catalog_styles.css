@@ -287,15 +287,15 @@
 }
 
 /* Color: swatches circulares */
-.swatches {
+/* .swatches {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
-}
+} */
 
 .swatch {
-  width: 26px;
-  height: 26px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: var(--swatch-color);
   border: 1px solid var(--border-soft);
@@ -309,10 +309,6 @@
 .swatch:focus-visible {
   transform: scale(1.12);
   outline: none;
-}
-
-.swatch.is-selected {
-  box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 3.5px var(--gold);
 }
 
 .swatch--light { border-color: var(--border); }
