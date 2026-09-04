@@ -398,7 +398,7 @@ main {
    ========================================================= */
 .btn { display: inline-block; margin-top: 2.4rem; }
 
-.btn button,
+.btn, .btn button,
 .btn-action {
   font-family: var(--font-body);
   font-size: 0.95rem;
@@ -423,14 +423,14 @@ main {
   box-shadow: 0 12px 32px -8px rgba(220, 192, 127, 0.65);
 }
 
-.btn--outline button {
+.btn--outline button, .btn--outline {
   background: transparent;
   color: var(--gold-light);
   border: 1px solid var(--gold-dim);
 }
 
-.btn--outline button:hover,
-.btn--outline button:focus-visible {
+.btn--outline button:hover, .btn--outline:hover,
+.btn--outline button:focus-visible, .btn--outline:focus-visible {
   transform: scale(1.045);
   background: rgba(184, 154, 75, 0.08);
   border-color: var(--gold-light);

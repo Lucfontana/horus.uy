@@ -52,10 +52,12 @@ function create_media(product){
     }
 
     const img_base = document.createElement("img")
+    img_base.className = "product-card__img--base"
     img_base.alt = `${product.name}`;
     img_base.src = `${product.imgSrc}`;
 
     const img_alt = document.createElement("img")
+    img_alt.className = "product-card__img--alt"
     img_alt.alt = `${product.name}, vista alternativa`;
     img_alt.src = `${product.imgSrcHover}`
 
@@ -85,7 +87,7 @@ function create_body(product){
     div_body.appendChild(div_footer)
 
     const price = document.createElement("span");
-    price.textContent = `${product.price}`;
+    price.textContent = `$${product.price}`;
     div_footer.appendChild(price);
 
     const icon_cart = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>`

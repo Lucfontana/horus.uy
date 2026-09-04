@@ -168,8 +168,6 @@
 .filters__sticky {
   position: sticky;
   top: calc(var(--header-h) + 1.5rem);
-  max-height: calc(100vh - var(--header-h) - 3rem);
-  overflow-y: auto;
   padding-right: 0.25rem;
   text-align: left;
 }
@@ -458,7 +456,7 @@
 .filters__apply {
   width: 100%;
   margin-top: 2.2rem;
-  border: none;
+  border: solid 1px;
 }
 
 /* =========================================================
