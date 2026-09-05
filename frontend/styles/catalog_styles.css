@@ -268,7 +268,8 @@
 }
 
 .filter-checklist label {
-  display: flex;
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
   align-items: center;
   gap: 0.7rem;
   font-size: 0.92rem;
@@ -285,11 +286,11 @@
 }
 
 /* Color: swatches circulares */
-/* .swatches {
+.swatches {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
-} */
+} 
 
 .swatch {
   width: 15px;

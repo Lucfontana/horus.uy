@@ -87,7 +87,6 @@ async function setBoundsValues(bounds){
   minLabel.textContent = `$${bounds.min}`
   maxLabel.textContent = `$${bounds.max}`;
   
-  console.log("i just made some bullshitttttt")
 }
 
 async function initPriceRange() {
@@ -181,7 +180,7 @@ async function initPriceRange() {
 
 initPriceRange();
     /* ============================================================
-     Cargar más productos
+     Cargar más productos (Por ahora codigo en desuso)
      ============================================================ */
   var loadMoreBtn = document.getElementById('btn-load-more');
   if (loadMoreBtn) {
