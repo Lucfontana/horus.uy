@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-  var root = document.documentElement;
-  var toggleBtn = document.getElementById('theme-toggle');
+  let root = document.documentElement;
+  let toggleBtn = document.getElementById('theme-toggle');
   if (!toggleBtn) return;
 
   function getTheme() {

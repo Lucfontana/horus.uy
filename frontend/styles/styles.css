@@ -4,6 +4,7 @@
 :root {
   --nav-bg:      rgb(9, 9, 11);
   --bg:          #0a0a0c;
+  --bgSection:   green;
   --bg-alt:      #121216;
   --bg-card:     #17171d;
   --border:      rgba(184, 154, 75, 0.22);
@@ -99,7 +100,7 @@ p { margin: 0; }
   font-size: 0.78rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--eyebrow);
   margin: 0 0 0.9rem;
   opacity: 0.85;
 }
@@ -170,13 +171,14 @@ main {
    ========================================================= */
 .site-header {
   position: fixed;
+  background: rgba(9, 9, 11, 0.88) !important;
   top: 0; left: 0; right: 0;
   height: var(--header-h);
   z-index: 100;
   background: linear-gradient(to bottom, rgba(10,10,12,0.9), rgba(10,10,12,0.55) 70%, transparent);
-  background-color: var(--nav-bg);
   transition: background-color 0.4s var(--ease), border-color 0.4s var(--ease);
   border-bottom: 1px solid transparent;
+  /* El nav se mantiene siempre oscuro, sin importar el modo claro/oscuro del resto del sitio */
   --border: rgba(184, 154, 75, 0.22);
   --text: #ede8dc;
 }
@@ -236,6 +238,9 @@ main {
   transform-origin: left;
 }
 
+:root:not([data-theme="light"]) .theme-toggle__icon--sun { display: block; }
+:root[data-theme="light"] .theme-toggle__icon--moon { display: block; }
+
 /* Hamburger */
 .nav-toggle {
   display: none;
@@ -294,7 +299,7 @@ main {
   gap: 0.6rem;
 }
 
-.theme-toggle {
+.icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -309,8 +314,8 @@ main {
   transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), background 0.25s var(--ease);
 }
 
-.theme-toggle:hover,
-.theme-toggle:focus-visible {
+.icon-btn:hover,
+.icon-btn:focus-visible {
   border-color: var(--gold-light);
   background: rgba(184, 154, 75, 0.1);
   transform: scale(1.045);
@@ -393,7 +398,7 @@ main {
    ========================================================= */
 .btn { display: inline-block; margin-top: 2.4rem; }
 
-.btn button,
+.btn, .btn button,
 .btn-action {
   font-family: var(--font-body);
   font-size: 0.95rem;
@@ -418,14 +423,14 @@ main {
   box-shadow: 0 12px 32px -8px rgba(220, 192, 127, 0.65);
 }
 
-.btn--outline button {
+.btn--outline button, .btn--outline {
   background: transparent;
   color: var(--gold-light);
   border: 1px solid var(--gold-dim);
 }
 
-.btn--outline button:hover,
-.btn--outline button:focus-visible {
+.btn--outline button:hover, .btn--outline:hover,
+.btn--outline button:focus-visible, .btn--outline:focus-visible {
   transform: scale(1.045);
   background: rgba(184, 154, 75, 0.08);
   border-color: var(--gold-light);
@@ -444,6 +449,7 @@ main {
   background-size: cover;
   background-position: center;
   overflow: hidden;
+  /* El hero conserva texto claro fijo: tiene foto de fondo con overlay oscuro */
   --text: #ede8dc;
   --text-muted: #a39d8f;
 }
@@ -635,7 +641,7 @@ main {
 /* Contenedor que recorta el deslizamiento */
 .review-viewport {
   position: relative;
-  /* overflow: hidden; */
+  overflow: hidden;
   flex: 1 1 300px;
   max-width: 340px;
   border-radius: 4px;
@@ -864,7 +870,6 @@ main {
   display: flex;
   gap: 1.2rem;
   margin-top: 2rem;
-  /* align-items: center; */
 }
 
 .contact-form__or {
@@ -921,6 +926,7 @@ main {
 
 .site-footer nav ul {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 1.8rem;
   margin-top: 1rem;

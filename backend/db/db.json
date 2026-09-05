@@ -1,0 +1,158 @@
+{
+    "items": {
+        "1": {
+            "is_new": true,
+            "name": "Abrigo Lana Camel",
+            "categories": [
+                "Abrigos"
+            ],
+            "price": 3200,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Abrigo Lana Camel"
+        },
+        "2": {
+            "is_new": false,
+            "name": "Camisa Lino Blanca",
+            "categories": [
+                "Camisas"
+            ],
+            "price": 1450,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Camisa Lino Blanca"
+        },
+        "3": {
+            "is_new": false,
+            "name": "Camiseta Básica",
+            "categories": [
+                "Camisetas"
+            ],
+            "price": 650,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Camiseta Básica Algodón"
+        },
+        "4": {
+            "is_new": false,
+            "name": "Botas Cuero Negras",
+            "categories": [
+                "Calzado"
+            ],
+            "price": 2900,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Botas Cuero Negras"
+        },
+        "5": {
+            "is_new": false,
+            "name": "Chaleco Acolchado",
+            "categories": [
+                "Chalecos"
+            ],
+            "price": 1800,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Chaleco Acolchado"
+        },
+        "6": {
+            "is_new": false,
+            "name": "Pantalón Sastre Gris",
+            "categories": [
+                "Pantalones"
+            ],
+            "price": 1950,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Pantalón Sastre Gris"
+        },
+        "7": {
+            "is_new": false,
+            "name": "Vestido Midi Verde",
+            "categories": [
+                "Vestidos"
+            ],
+            "price": 2400,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Vestido Midi Verde"
+        },
+        "8": {
+            "is_new": false,
+            "name": "Cinturón Cuero Bordó",
+            "categories": [
+                "Accesorios"
+            ],
+            "price": 890,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Cinturón Cuero Bordó"
+        },
+        "9": {
+            "is_new": false,
+            "name": "Camisa Denim Azul",
+            "categories": [
+                "Camisas"
+            ],
+            "price": 1680,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Camisa Denim Azul"
+        },
+        "10": {
+            "is_new": false,
+            "name": "Zapatillas Urbanas",
+            "categories": [
+                "Calzado"
+            ],
+            "price": 2100,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Zapatillas Urbanas Grises"
+        },
+        "11": {
+            "is_new": false,
+            "name": "Buzo Oversize Gris",
+            "categories": [
+                "Camisetas"
+            ],
+            "price": 980,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Buzo Oversize Gris"
+        },
+        "12": {
+            "is_new": false,
+            "name": "Pañuelo Seda Estampado",
+            "categories": [
+                "Accesorios"
+            ],
+            "price": 560,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Pañuelo Seda Estampado"
+        },
+        "13": {
+            "is_new": true,
+            "name": "Abrigo Lana Camel",
+            "categories": [
+                "Abrigos"
+            ],
+            "price": 2,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Abrigo Lana Camel"
+        },
+                "14": {
+            "is_new": true,
+            "name": "Abrigo Lana Camel",
+            "categories": [
+                "Abrigos"
+            ],
+            "price": 3500,
+            "imgSrc": "src/placeholder.png",
+            "imgSrcHover": "src/placeholder_alt.png",
+            "alt": "Abrigo Lana Camel"
+        }
+    }
+}
