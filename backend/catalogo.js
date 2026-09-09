@@ -27,14 +27,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   let bounds = await calcMinMaxPrice()
   setBoundsValues(bounds)
-  /* ============================================================
-     Chips de talle (multi-selección)
-     ============================================================ */
-  document.querySelectorAll('[data-chip-toggle]').forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      chip.classList.toggle('is-selected');
-    });
-  });
 
   /* ============================================================
      Rango de precio (doble slider + inputs numéricos)
@@ -63,7 +55,7 @@ async function calcMinMaxPrice(){
   return {min: minPrice, max: maxPrice}
 }
 
-async function setBoundsValues(bounds){
+function setBoundsValues(bounds){
   const minSlider = document.getElementById('price-min');
   const maxSlider = document.getElementById('price-max');
 
@@ -82,7 +74,12 @@ async function setBoundsValues(bounds){
   maxSlider.value = bounds.max;
 
   minInput.value = bounds.min;
+  minInput.min = bounds.min;
+  minInput.max = bounds.max;
+
   maxInput.value = bounds.max;
+  maxInput.min = bounds.min;
+  maxInput.max = bounds.max;
 
   minLabel.textContent = `$${bounds.min}`
   maxLabel.textContent = `$${bounds.max}`;

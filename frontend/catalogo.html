@@ -108,115 +108,133 @@
           <p class="eyebrow">Filtros</p>
           <h2 class="filters__title">Refinar búsqueda</h2>
           <p class="filters__subtitle">Encontrá tu prenda ideal.</p>
-
-          <!-- Categoría -->
-          <div class="filter-group" data-filter-group>
-            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-categoria">
-              <span>Categoría</span>
-              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="filter-group__panel is-collapsed" id="panel-categoria">
-              <div class="filter-group__panel-inner">
-                <ul class="filter-checklist">
-                  <li><label><input type="checkbox" name="categoria" value="abrigos"> Abrigos</label></li>
-                  <li><label><input type="checkbox" name="categoria" value="calzado"> Calzado</label></li>
-                  <li><label><input type="checkbox" name="categoria" value="camisas"> Camisas</label></li>
-                  <li><label><input type="checkbox" name="categoria" value="camisetas"> Camisetas</label></li>
-                  <li><label><input type="checkbox" name="categoria" value="chalecos"> Chalecos</label></li>
-                  <li><label><input type="checkbox" name="categoria" value="pantalones"> Pantalones</label></li>
-                  <li><label><input type="checkbox" name="categoria" value="vestidos"> Vestidos</label></li>
-                  <li><label><input type="checkbox" name="categoria" value="accesorios"> Accesorios</label></li>
-                </ul>
+          <form action="" id="formularioFiltros">
+            <!-- Categoría -->
+            <div class="filter-group" data-filter-group>
+              <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-categoria">
+                <span>Categoría</span>
+                <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="filter-group__panel is-collapsed" id="panel-categoria">
+                <div class="filter-group__panel-inner">
+                  <ul class="filter-checklist">
+                    <li><label><input type="checkbox" name="categoria" value="abrigos"> Abrigos</label></li>
+                    <li><label><input type="checkbox" name="categoria" value="calzado"> Calzado</label></li>
+                    <li><label><input type="checkbox" name="categoria" value="camisas"> Camisas</label></li>
+                    <li><label><input type="checkbox" name="categoria" value="camisetas"> Camisetas</label></li>
+                    <li><label><input type="checkbox" name="categoria" value="chalecos"> Chalecos</label></li>
+                    <li><label><input type="checkbox" name="categoria" value="pantalones"> Pantalones</label></li>
+                    <li><label><input type="checkbox" name="categoria" value="vestidos"> Vestidos</label></li>
+                    <li><label><input type="checkbox" name="categoria" value="accesorios"> Accesorios</label></li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Color -->
-          <div class="filter-group" data-filter-group>
-            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-color">
-              <span>Color</span>
-              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="filter-group__panel is-collapsed" id="panel-color">
-              <div class="filter-group__panel-inner">
-                <ul class="filter-checklist swatches">
-                  <li><label><input type="checkbox" name="categoria" value="negro"> Negro <p class="swatch" data-swatch-toggle style="--swatch-color:#1a1a1a" aria-label="Negro"></p></label></li>
-                  <li><label><input type="checkbox" name="categoria" value="blanco"> Blanco <p class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#f5f5f0" aria-label="Blanco"></p></label></li>
-                  <li><label><input type="checkbox" name="categoria" value="beige"> Beige <p class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#d8c9a8" aria-label="Beige" ></p></label></li>
-                  <li><label><input type="checkbox" name="categoria" value="camel"> Camel <p class="swatch" data-swatch-toggle style="--swatch-color:#b98d54" aria-label="Camel"></p></label></li>
-                  <li><label><input type="checkbox" name="categoria" value="verde"> Verde <p class="swatch" data-swatch-toggle style="--swatch-color:#4a5c45" aria-label="Verde"></p></label></li>
-                  <li><label><input type="checkbox" name="categoria" value="azul"> Azul <p class="swatch" data-swatch-toggle style="--swatch-color:#33475b" aria-label="Azul"></p></label></li>
-                  <li><label><input type="checkbox" name="categoria" value="bordo"> Bordó <p class="swatch" data-swatch-toggle style="--swatch-color:#6b2737" aria-label="Bordó"></p></label></li>
-                  <li><label><input type="checkbox" name="categoria" value="gris"> Gris <p class="swatch" data-swatch-toggle style="--swatch-color:#8a8a86" aria-label="Gris"></p></label></li>
-                </ul>
+            <!-- Color -->
+            <div class="filter-group" data-filter-group>
+              <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-color">
+                <span>Color</span>
+                <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="filter-group__panel is-collapsed" id="panel-color">
+                <div class="filter-group__panel-inner">
+                  <ul class="filter-checklist swatches">
+                    <li><label><input type="checkbox" name="categoria" value="negro"> Negro <p class="swatch" data-swatch-toggle style="--swatch-color:#1a1a1a" aria-label="Negro"></p></label></li>
+                    <li><label><input type="checkbox" name="categoria" value="blanco"> Blanco <p class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#f5f5f0" aria-label="Blanco"></p></label></li>
+                    <li><label><input type="checkbox" name="categoria" value="beige"> Beige <p class="swatch swatch--light" data-swatch-toggle style="--swatch-color:#d8c9a8" aria-label="Beige" ></p></label></li>
+                    <li><label><input type="checkbox" name="categoria" value="camel"> Camel <p class="swatch" data-swatch-toggle style="--swatch-color:#b98d54" aria-label="Camel"></p></label></li>
+                    <li><label><input type="checkbox" name="categoria" value="verde"> Verde <p class="swatch" data-swatch-toggle style="--swatch-color:#4a5c45" aria-label="Verde"></p></label></li>
+                    <li><label><input type="checkbox" name="categoria" value="azul"> Azul <p class="swatch" data-swatch-toggle style="--swatch-color:#33475b" aria-label="Azul"></p></label></li>
+                    <li><label><input type="checkbox" name="categoria" value="bordo"> Bordó <p class="swatch" data-swatch-toggle style="--swatch-color:#6b2737" aria-label="Bordó"></p></label></li>
+                    <li><label><input type="checkbox" name="categoria" value="gris"> Gris <p class="swatch" data-swatch-toggle style="--swatch-color:#8a8a86" aria-label="Gris"></p></label></li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Precio -->
-          <div class="filter-group" data-filter-group>
-            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-precio">
-              <span>Precio</span>
-              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="filter-group__panel is-collapsed" id="panel-precio">
-              <div class="filter-group__panel-inner">
-                <div class="price-range" id="price-range">
-                  <div class="price-range__labels">
-                    <span id="price-min-label">$499</span>
-                    <span id="price-max-label">$3.200</span>
-                  </div>
-                  <div class="price-range__track">
-                    <div class="price-range__fill"></div>
-                    <div class="price-range__fill-active" id="price-fill-active"></div>
-                    <input type="range" id="price-min" min="499" max="3200" step="1" value="499" aria-label="Precio mínimo">
-                    <input type="range" id="price-max" min="499" max="3200" step="1" value="3200" aria-label="Precio máximo">
-                  </div>
-                  <div class="price-range__inputs">
-                    <div class="field-mini">
-                      <label for="price-min-input">Min</label>
-                      <input type="number" id="price-min-input" value="499" min="499" max="3200">
+            <!-- Precio -->
+            <div class="filter-group" data-filter-group>
+              <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-precio">
+                <span>Precio</span>
+                <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="filter-group__panel is-collapsed" id="panel-precio">
+                <div class="filter-group__panel-inner">
+                  <div class="price-range" id="price-range">
+                    <div class="price-range__labels">
+                      <span id="price-min-label">$499</span>
+                      <span id="price-max-label">$3.200</span>
                     </div>
-                    <div class="field-mini">
-                      <label for="price-max-input">Max</label>
-                      <input type="number" id="price-max-input" value="3200" min="499" max="3200">
+                    <div class="price-range__track">
+                      <div class="price-range__fill"></div>
+                      <div class="price-range__fill-active" id="price-fill-active"></div>
+                      <input type="range" id="price-min" min="499" max="3200" step="1" value="499" aria-label="Precio mínimo">
+                      <input type="range" id="price-max" min="499" max="3200" step="1" value="3200" aria-label="Precio máximo">
+                    </div>
+                    <div class="price-range__inputs">
+                      <div class="field-mini">
+                        <label for="price-min-input">Min</label>
+                        <input type="number" id="price-min-input" value="499" min="499" max="3200">
+                      </div>
+                      <div class="field-mini">
+                        <label for="price-max-input">Max</label>
+                        <input type="number" id="price-max-input" value="3200" min="499" max="3200">
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Talle -->
-          <div class="filter-group" data-filter-group>
-            <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-talle">
-              <span>Talle</span>
-              <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="filter-group__panel is-collapsed" id="panel-talle">
-              <div class="filter-group__panel-inner">
-                <div class="size-chips">
-                  <button type="button" class="chip" data-chip-toggle>XS</button>
-                  <button type="button" class="chip" data-chip-toggle>S</button>
-                  <button type="button" class="chip" data-chip-toggle>M</button>
-                  <button type="button" class="chip" data-chip-toggle>L</button>
-                  <button type="button" class="chip" data-chip-toggle>XL</button>
-                  <button type="button" class="chip" data-chip-toggle>XXL</button>
+            <!-- Talle -->
+            <div class="filter-group" data-filter-group>
+              <button type="button" class="filter-group__toggle" aria-expanded="true" aria-controls="panel-talle">
+                <span>Talle</span>
+                <svg class="filter-group__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              <div class="filter-group__panel is-collapsed" id="panel-talle">
+                <div class="filter-group__panel-inner">
+                  <div class="size-chips">
+                    <span class="chip-option">
+                      <input type="checkbox" id="talle-xs" name="talle" value="XS" class="chip-input">
+                      <label for="talle-xs" class="chip">XS</label>
+                    </span>
+                    <span class="chip-option">
+                      <input type="checkbox" id="talle-s" name="talle" value="S" class="chip-input">
+                      <label for="talle-s" class="chip">S</label>
+                    </span>
+                    <span class="chip-option">
+                      <input type="checkbox" id="talle-m" name="talle" value="M" class="chip-input">
+                      <label for="talle-m" class="chip">M</label>
+                    </span>
+                    <span class="chip-option">
+                      <input type="checkbox" id="talle-l" name="talle" value="L" class="chip-input">
+                      <label for="talle-l" class="chip">L</label>
+                    </span>
+                    <span class="chip-option">
+                      <input type="checkbox" id="talle-XL" name="talle" value="XL" class="chip-input">
+                      <label for="talle-XL" class="chip">XL</label>
+                    </span>
+                    <span class="chip-option">
+                      <input type="checkbox" id="talle-XXL" name="talle" value="XXL" class="chip-input">
+                      <label for="talle-XXL" class="chip">XXL</label>
+                    </span>                                                      
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-            <button type="button" class="btn btn--outline filters__apply">Aplicar filtros</button>
-          
+            
+            <button type="submit" class="btn btn--outline filters__apply" id="filtrarButton">Aplicar filtros</button>
+          </form>
         </div>
       </aside>
 
@@ -270,6 +288,7 @@
 
   <script src="../backend/theme.js"></script>
   <script src="../backend/navbar.js"></script>
+  <script src="../backend/filter_products.js"></script>
   <script type="module" src="../backend/catalogo.js"></script>
   <script type="module" src="../backend/load_products.js"></script>
 </body>
