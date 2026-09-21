@@ -1,12 +1,14 @@
-formularioFiltros = document.getElementById("formularioFiltros")
-
-formularioFiltros.addEventListener("submit", (e) => retrieveFiltros(e))
-function retrieveFiltros(e){
-    e.preventDefault()
-    console.log("boton apretau")
+export function construirFiltros(origen, precioMinDefault, precioMaxDefault) {
+    return {
+        categoria: origen.getAll("categoria"),
+        color: origen.getAll("color"),
+        talle: origen.getAll("talle"),
+        precioMin: origen.has("precioMin") ? Number(origen.get("precioMin")) : precioMinDefault,
+        precioMax: origen.has("precioMax") ? Number(origen.get("precioMax")) : precioMaxDefault,
+    };
 }
 
-function aplicarFiltros(productos, filtros) {
+export function aplicarFiltros(productos, filtros) {
     let resultado = productos;
     resultado = filtrarPorCategoria(resultado, filtros.categoria);
     resultado = filtrarPorColor(resultado, filtros.color);
@@ -15,21 +17,33 @@ function aplicarFiltros(productos, filtros) {
     return resultado;
 }
 
-function filtrarPorCategoria(productos, filtros){
-
+export function filtrarPorCategoria(productos, categoriasSeleccionadas) {
+    if (categoriasSeleccionadas.length === 0) return productos;
+    return productos.filter(producto =>
+        producto.categories.some(cat =>
+            categoriasSeleccionadas.includes(cat.toLowerCase())
+        )
+    );
 }
 
-function filtrarPorColor(productos, filtros){
-
+export function filtrarPorColor(productos, coloresSeleccionados) {
+    if (coloresSeleccionados.length === 0) return productos;
+    return productos.filter(producto =>
+        producto.colors.some(color =>
+            coloresSeleccionados.includes(color.toLowerCase())
+        )
+    );
 }
 
-function filtrarPorPrecio(productos, filtros){
-
+export function filtrarPorPrecio(productos, precioMin, precioMax) {
+    return productos.filter(producto =>
+        producto.price >= precioMin && producto.price <= precioMax
+    );
 }
 
-function filtrarPorTalle(productos, filtros){
-
+export function filtrarPorTalle(productos, tallesSeleccionados) {
+    if (tallesSeleccionados.length === 0) return productos;
+    return productos.filter(producto =>
+        producto.size.some(talle => tallesSeleccionados.includes(talle))
+    );
 }
-
-
-

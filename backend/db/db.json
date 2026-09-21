@@ -143,7 +143,9 @@
             "price": 2,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel"
+            "alt": "Abrigo Lana Camel",
+            "colors": [],
+            "size": []
         },
                 "14": {
             "is_new": true,
@@ -154,7 +156,9 @@
             "price": 3500,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel"
+            "alt": "Abrigo Lana Camel",
+            "colors": [],
+            "size": []
         }
     }
 }
