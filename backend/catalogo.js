@@ -1,6 +1,8 @@
-import {fetch_products} from "../backend/load_products.js";
+import {calcMinMaxPrice, obtenerProductos} from "../backend/load_products.js";
 
 document.addEventListener('DOMContentLoaded', async function () {
+
+
 
   /* ============================================================
      Acordeón de filtros
@@ -25,35 +27,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   });
 
-  let bounds = await calcMinMaxPrice()
+  let productos = await obtenerProductos();
+  let bounds = calcMinMaxPrice(productos);
   setBoundsValues(bounds)
 
   /* ============================================================
      Rango de precio (doble slider + inputs numéricos)
      ============================================================ */
-async function calcMinMaxPrice(){
-  let productos = await fetch_products()
-
-  if (!productos) return;
-  
-  let productos_formateados = Object.values(productos.items)
-
-  let array_prices = []
-  productos_formateados.forEach((producto) => {
-    let precio_unitario = producto.price;
-    array_prices.push(precio_unitario)
-  })
-  console.log(`Precios individuales: ${array_prices}`)
-
-  //Busca el numero más pequeño, comparando valor por valor
-  //acc mantiene el número más pequeño, val va iterando por los otros
-  let minPrice = array_prices.reduce((acc, val) => Math.min(acc, val));
-  let maxPrice = array_prices.reduce((acc, val) => Math.max(acc, val));
-
-  //TODO: DENTRO DE ESTA FUNCION, ACTUALIZAR LOS VALUE DE PRECIO
-  console.log(`Min: ${minPrice}, max: ${maxPrice}`)
-  return {min: minPrice, max: maxPrice}
-}
 
 function setBoundsValues(bounds){
   const minSlider = document.getElementById('price-min');
@@ -98,12 +78,12 @@ async function initPriceRange() {
   const maxLabel = document.getElementById('price-max-label');
   const fillActive = document.getElementById('price-fill-active');
 
-  const bounds = await calcMinMaxPrice();
+  const bounds = calcMinMaxPrice(productos);
   if (!bounds) return;
 
   console.log("Estos son los bounds lel", bounds);
 
-  setBoundsValues()
+  setBoundsValues(bounds)
 
   const minGap = 50;
   let minVal = Number(minSlider.value);

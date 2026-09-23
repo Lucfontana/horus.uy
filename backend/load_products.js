@@ -4,9 +4,8 @@ import {
 } from "../backend/filter_products.js";
 
 const formularioFiltros = document.getElementById("formularioFiltros");
-const PRECIO_MIN_DEFAULT = Number(document.getElementById("price-min").min);
-const PRECIO_MAX_DEFAULT = Number(document.getElementById("price-max").max);
 
+let PRECIO_MAX_DEFAULT, PRECIO_MIN_DEFAULT;
 let productos = []; // fuente única de productos, se llena una sola vez
 
 document.addEventListener("DOMContentLoaded", load_items);
@@ -21,19 +20,51 @@ export async function fetch_products(){
     }
 }
 
+let productosPromise = null;
+/* Trae los productos desde una misma fuente: evita que se hagan multiples 
+    fetch a la base de datos, si no que lo hace una vez al iniciar y lo obtiene
+    desde acá para no repetir los fetch */
+export function obtenerProductos() {
+    if (!productosPromise) {
+        productosPromise = fetch_products().then(data => Object.values(data.items));
+    }
+    return productosPromise;
+}
+
 async function load_items(){
     try {
-        const data = await fetch_products();
-        productos = Object.values(data.items);
+        productos = await obtenerProductos();
+        const bounds = calcMinMaxPrice(productos); // ahora función pura, sin fetch propio
+        PRECIO_MIN_DEFAULT = bounds.min;
+        PRECIO_MAX_DEFAULT = bounds.max;
 
         const filtros = leerFiltrosDesdeURL();
         sincronizarFormularioConFiltros(filtros);
 
         const productosFiltrados = aplicarFiltros(productos, filtros);
         create_cards(productosFiltrados);
+        console.log("Hola los items fueron cargados: ", productosFiltrados)
     } catch (error) {
         console.error(`Hubo un error al ejecutar la peticion: ${error}`);
     }
+}
+
+export function calcMinMaxPrice(productos){
+  let array_prices = []
+  productos.forEach((producto) => {
+    let precio_unitario = producto.price;
+    array_prices.push(precio_unitario)
+  })
+  console.log(`Precios individuales: ${array_prices}`)
+
+  //Busca el numero más pequeño, comparando valor por valor
+  //acc mantiene el número más pequeño, val va iterando por los otros
+  let minPrice = array_prices.reduce((acc, val) => Math.min(acc, val));
+  let maxPrice = array_prices.reduce((acc, val) => Math.max(acc, val));
+
+  //TODO: DENTRO DE ESTA FUNCION, ACTUALIZAR LOS VALUE DE PRECIO
+  console.log(`Min: ${minPrice}, max: ${maxPrice}`)
+  return {min: minPrice, max: maxPrice}
 }
 
 function retrieveFiltros(e) {

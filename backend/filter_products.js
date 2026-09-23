@@ -14,6 +14,7 @@ export function aplicarFiltros(productos, filtros) {
     resultado = filtrarPorColor(resultado, filtros.color);
     resultado = filtrarPorPrecio(resultado, filtros.precioMin, filtros.precioMax);
     resultado = filtrarPorTalle(resultado, filtros.talle);
+    console.log(resultado)
     return resultado;
 }
 
