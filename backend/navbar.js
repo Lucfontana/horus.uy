@@ -62,3 +62,31 @@ if ('IntersectionObserver' in window) {
   revealEls.forEach((el) => el.classList.add('is-visible'));
 }
 
+// ---------- Cart drawer ----------
+const cartBtn = document.getElementById('cart-btn');
+const cartDrawer = document.getElementById('cart-drawer');
+const cartDrawerClose = document.getElementById('cart-drawer-close');
+const cartOverlay = document.getElementById('cart-overlay');
+
+function closeCart() {
+  cartDrawer.classList.remove('is-open');
+  cartOverlay.classList.remove('is-active');
+  cartDrawer.setAttribute('aria-hidden', 'true');
+  cartBtn.setAttribute('aria-expanded', 'false');
+}
+
+function toggleCart() {
+  const isOpen = cartDrawer.classList.toggle('is-open');
+  cartOverlay.classList.toggle('is-active', isOpen);
+  cartDrawer.setAttribute('aria-hidden', String(!isOpen));
+  cartBtn.setAttribute('aria-expanded', String(isOpen));
+  if (isOpen) closeNav(); // por si el menú hamburguesa estaba abierto
+}
+
+cartBtn.addEventListener('click', toggleCart);
+cartDrawerClose.addEventListener('click', closeCart);
+cartOverlay.addEventListener('click', closeCart);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && cartDrawer.classList.contains('is-open')) closeCart();
+});
