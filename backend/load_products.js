@@ -24,9 +24,11 @@ let productosPromise = null;
 /* Trae los productos desde una misma fuente: evita que se hagan multiples 
     fetch a la base de datos, si no que lo hace una vez al iniciar y lo obtiene
     desde acá para no repetir los fetch */
-export function obtenerProductos() {
-    if (!productosPromise) {
-        productosPromise = fetch_products().then(data => Object.values(data.items));
+export function obtenerProductos(actualizar = false) {
+    if (actualizar || !productosPromise) {
+        productosPromise = fetch_products().then(data =>
+            Object.entries(data.items).map(([id, producto]) => ({ id, ...producto }))
+        );
     }
     return productosPromise;
 }
@@ -180,6 +182,7 @@ function create_body(product){
     button_addCart.innerHTML = `${icon_cart}`
     button_addCart.type = "button"
     button_addCart.className = "product-card__cart"
+    button_addCart.dataset.productId = product.id;
     button_addCart.ariaLabel = `Agregar ${product.name} al carrito`
     div_footer.appendChild(button_addCart)
 

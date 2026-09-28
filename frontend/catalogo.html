@@ -46,12 +46,12 @@
       </nav>
 
       <div class="site-header__actions">
-        <button type="button" class="icon-btn" id="cart-btn" aria-expanded="false" aria-controls="cart-drawer" aria-label="Ver carrito (2 productos)" style="position: relative;">
+        <button type="button" class="icon-btn" id="cart-btn" aria-expanded="false" aria-controls="cart-drawer" aria-label="Ver carrito (0 productos)" style="position: relative;">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M6 7h12l-1 13H7L6 7Z"></path>
             <path d="M9 7a3 3 0 0 1 6 0"></path>
           </svg>
-          <span class="icon-btn__badge">2</span>
+          <span class="icon-btn__badge" hidden>0</span>
         </button>
 
         <button type="button" class="icon-btn" id="profile-btn" aria-label="Mi cuenta">
@@ -102,54 +102,13 @@
       </button>
     </div>
 
-    <div class="cart-drawer__items">
-      <article class="cart-item">
-        <div class="cart-item__img"></div>
-        <div class="cart-item__info">
-          <h3 class="cart-item__name">Remera Oversize Glitch</h3>
-          <p class="cart-item__variant">Talle M · Negro</p>
-          <div class="cart-item__qty">
-            <button type="button" class="qty-btn" aria-label="Restar cantidad">−</button>
-            <span>1</span>
-            <button type="button" class="qty-btn" aria-label="Sumar cantidad">+</button>
-          </div>
-        </div>
-        <span class="cart-item__price">$ 2.500</span>
-      </article>
-
-      <article class="cart-item">
-        <div class="cart-item__img"></div>
-        <div class="cart-item__info">
-          <h3 class="cart-item__name">Buzo Canguro Horus</h3>
-          <p class="cart-item__variant">Talle L · Beige</p>
-          <div class="cart-item__qty">
-            <button type="button" class="qty-btn" aria-label="Restar cantidad">−</button>
-            <span>1</span>
-            <button type="button" class="qty-btn" aria-label="Sumar cantidad">+</button>
-          </div>
-        </div>
-        <span class="cart-item__price">$ 4.200</span>
-      </article>
-
-      <article class="cart-item">
-        <div class="cart-item__img"></div>
-        <div class="cart-item__info">
-          <h3 class="cart-item__name">Pantalón Cargo Slim</h3>
-          <p class="cart-item__variant">Talle 42 · Verde</p>
-          <div class="cart-item__qty">
-            <button type="button" class="qty-btn" aria-label="Restar cantidad">−</button>
-            <span>1</span>
-            <button type="button" class="qty-btn" aria-label="Sumar cantidad">+</button>
-          </div>
-        </div>
-        <span class="cart-item__price">$ 3.800</span>
-      </article>
+    <div class="cart-drawer__items" id="cart-items" aria-live="polite">
     </div>
 
     <div class="cart-drawer__footer">
       <div class="cart-drawer__subtotal">
         <span>Subtotal</span>
-        <span>$ 10.500</span>
+        <span id="cart-subtotal">$ 0</span>
       </div>
       <button type="button" class="cart-drawer__checkout">Finalizar compra</button>
     </div>
@@ -357,5 +316,6 @@
   <script src="../backend/navbar.js"></script>
   <script type="module" src="../backend/catalogo.js"></script>
   <script type="module" src="../backend/load_products.js"></script>
+  <script type="module" src="../backend/carrito.js"></script>
 </body>
 </html>
