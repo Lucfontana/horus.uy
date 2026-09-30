@@ -6,11 +6,13 @@
             "categories": [
                 "Abrigos"
             ],
-            "price": 3200,
+            "price": 3100,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel"
-        },
+            "alt": "Abrigo Lana Camel",
+            "colors": [],
+            "size": []
+        },  
         "2": {
             "is_new": false,
             "name": "Camisa Lino Blanca",
@@ -141,18 +143,22 @@
             "price": 2,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel"
+            "alt": "Abrigo Lana Camel",
+            "colors": [],
+            "size": []
         },
-                "14": {
+        "14": {
             "is_new": true,
             "name": "Abrigo Lana Camel",
             "categories": [
                 "Abrigos"
             ],
-            "price": 3500,
+            "price": 35000,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel"
+            "alt": "Abrigo Lana Camel",
+            "colors": [],
+            "size": []
         }
     }
 }
