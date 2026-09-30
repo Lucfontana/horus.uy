@@ -1,6 +1,5 @@
 import { obtenerProductos } from "./load_products.js";
-
-const CART_STORAGE_KEY = "horus-cart";
+import { CART_STORAGE_KEY, guardarIdsCarrito, leerIdsCarrito } from "./cart_storage.js";
 const cartButton = document.getElementById("cart-btn");
 const cartItems = document.getElementById("cart-items");
 const cartSubtotal = document.getElementById("cart-subtotal");
@@ -11,24 +10,6 @@ cartLoader.className = "cart-loading";
 cartLoader.src = new URL("../frontend/src/loading-orange.gif", import.meta.url).href;
 cartLoader.alt = "Cargando carrito";
 let productosDisponibles = [];
-
-function leerIdsCarrito() {
-    try {
-        const ids = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
-        return Array.isArray(ids) ? ids.map(String) : [];
-    } catch (error) {
-        console.error("No se pudo leer el carrito:", error);
-        return [];
-    }
-}
-
-function guardarIdsCarrito(ids) {
-    try {
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(ids));
-    } catch (error) {
-        console.error("No se pudo guardar el carrito:", error);
-    }
-}
 
 function actualizarContador(cantidad) {
     cartBadge.textContent = cantidad;
@@ -180,7 +161,6 @@ document.addEventListener("click", event => {
 
 cartButton.addEventListener("click", async () => {
     cartItems.replaceChildren(cartLoader);
-    if (!cartLoader) console.log("Hola, no existo!!")
     try {
         const productos = await obtenerProductos(true);
         productosDisponibles = productos;
