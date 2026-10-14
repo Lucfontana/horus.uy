@@ -2,163 +2,143 @@
     "items": {
         "1": {
             "is_new": true,
-            "name": "Abrigo Lana Camel",
+            "name": "Abrigo de lana clásico",
             "categories": [
-                "Abrigos"
+                "Abrigos",
+                "Elegante"
             ],
-            "price": 3100,
+            "price": 4890,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel",
-            "colors": [],
-            "size": []
-        },  
+            "alt": "Abrigo de lana largo color gris oscuro con botones",
+            "colors": [
+                "Gris",
+                "Negro",
+                "Azul"
+            ],
+            "size": [
+                "S",
+                "M",
+                "L",
+                "XL"
+            ]
+        },
         "2": {
             "is_new": false,
-            "name": "Camisa Lino Blanca",
+            "name": "Campera de jean oversize",
             "categories": [
-                "Camisas"
+                "Camperas",
+                "Casual"
             ],
-            "price": 1450,
+            "price": 3290,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Camisa Lino Blanca"
+            "alt": "Campera de jean azul de corte oversize",
+            "colors": [
+                "Azul",
+                "Negro"
+            ],
+            "size": [
+                "M",
+                "L",
+                "XL"
+            ]
         },
         "3": {
-            "is_new": false,
-            "name": "Camiseta Básica",
+            "is_new": true,
+            "name": "Camisa de lino manga larga",
             "categories": [
-                "Camisetas"
+                "Camisas",
+                "Casual",
+                "Verano"
             ],
-            "price": 650,
+            "price": 1890,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Camiseta Básica Algodón"
+            "alt": "Camisa de lino blanca con mangas largas",
+            "colors": [
+                "Blanco",
+                "Beige",
+                "Celeste"
+            ],
+            "size": [
+                "S",
+                "M",
+                "L"
+            ]
         },
         "4": {
             "is_new": false,
-            "name": "Botas Cuero Negras",
+            "name": "Pantalón chino slim fit",
             "categories": [
-                "Calzado"
+                "Pantalones",
+                "Elegante"
             ],
-            "price": 2900,
+            "price": 2450,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Botas Cuero Negras"
+            "alt": "Pantalón chino color beige de corte slim",
+            "colors": [
+                "Beige",
+                "Azul",
+                "Verde"
+            ],
+            "size": [
+                "S",
+                "M",
+                "L",
+                "XL"
+            ]
         },
         "5": {
-            "is_new": false,
-            "name": "Chaleco Acolchado",
+            "is_new": true,
+            "name": "Buzo canguro con capucha",
             "categories": [
-                "Chalecos"
+                "Buzos",
+                "Casual",
+                "Deportivo"
             ],
-            "price": 1800,
+            "price": 2190,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Chaleco Acolchado"
+            "alt": "Buzo canguro gris con capucha y bolsillo frontal",
+            "colors": [
+                "Gris",
+                "Negro",
+                "Morado"
+            ],
+            "size": [
+                "S",
+                "M",
+                "L",
+                "XL",
+                "XXL"
+            ]
         },
         "6": {
             "is_new": false,
-            "name": "Pantalón Sastre Gris",
+            "name": "Vestido midi floreado",
             "categories": [
-                "Pantalones"
+                "Vestidos",
+                "Verano",
+                "Elegante"
             ],
-            "price": 1950,
+            "price": 3150,
             "imgSrc": "src/placeholder.png",
             "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Pantalón Sastre Gris"
-        },
-        "7": {
-            "is_new": false,
-            "name": "Vestido Midi Verde",
-            "categories": [
-                "Vestidos"
+            "alt": "Vestido midi con estampado floral en tonos rojos y rosados",
+            "colors": [
+                "Rojo",
+                "Rosa",
+                "Azul"
             ],
-            "price": 2400,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Vestido Midi Verde"
-        },
-        "8": {
-            "is_new": false,
-            "name": "Cinturón Cuero Bordó",
-            "categories": [
-                "Accesorios"
-            ],
-            "price": 890,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Cinturón Cuero Bordó"
-        },
-        "9": {
-            "is_new": false,
-            "name": "Camisa Denim Azul",
-            "categories": [
-                "Camisas"
-            ],
-            "price": 1680,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Camisa Denim Azul"
-        },
-        "10": {
-            "is_new": false,
-            "name": "Zapatillas Urbanas",
-            "categories": [
-                "Calzado"
-            ],
-            "price": 2100,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Zapatillas Urbanas Grises"
-        },
-        "11": {
-            "is_new": false,
-            "name": "Buzo Oversize Gris",
-            "categories": [
-                "Camisetas"
-            ],
-            "price": 980,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Buzo Oversize Gris"
-        },
-        "12": {
-            "is_new": false,
-            "name": "Pañuelo Seda Estampado",
-            "categories": [
-                "Accesorios"
-            ],
-            "price": 560,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Pañuelo Seda Estampado"
-        },
-        "13": {
-            "is_new": true,
-            "name": "Abrigo Lana Camel",
-            "categories": [
-                "Abrigos"
-            ],
-            "price": 2,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel",
-            "colors": [],
-            "size": []
-        },
-        "14": {
-            "is_new": true,
-            "name": "Abrigo Lana Camel",
-            "categories": [
-                "Abrigos"
-            ],
-            "price": 35000,
-            "imgSrc": "src/placeholder.png",
-            "imgSrcHover": "src/placeholder_alt.png",
-            "alt": "Abrigo Lana Camel",
-            "colors": [],
-            "size": []
+            "size": [
+                "XS",
+                "S",
+                "M",
+                "L"
+            ]
         }
+
     }
 }

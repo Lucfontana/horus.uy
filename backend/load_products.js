@@ -16,11 +16,12 @@ if (productGrid && formularioFiltros) {
 
 export async function fetch_products(){
     try {
-        const respuesta = await fetch("../backend/db/db.json");
+        const respuesta = await fetch("/api/products");
         if (!respuesta.ok) throw new Error(`Error HTTP: ${respuesta.status}`);
-        return respuesta.json();
+        return await respuesta.json();
     } catch (error) {
-        console.error(`Hubo un error: ${error}`)
+        console.error(`Hubo un error: ${error}`);
+        throw error;
     }
 }
 
@@ -32,7 +33,10 @@ export function obtenerProductos(actualizar = false) {
     if (actualizar || !productosPromise) {
         productosPromise = fetch_products().then(data =>
             Object.entries(data.items).map(([id, producto]) => ({ id, ...producto }))
-        );
+        ).catch(error => {
+            productosPromise = null;
+            throw error;
+        });
     }
     return productosPromise;
 }
@@ -56,6 +60,7 @@ async function load_items(){
 }
 
 export function calcMinMaxPrice(productos){
+    if (productos.length === 0) return {min: 0, max: 0};
   let array_prices = []
   productos.forEach((producto) => {
     let precio_unitario = producto.price;
