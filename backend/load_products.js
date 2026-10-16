@@ -149,6 +149,9 @@ function create_media(product){
         div_media.appendChild(badge_new);
     }
 
+    const redireccionar = document.createElement("a");
+    redireccionar.href = `/frontend/producto.html?id=${product.id}`;
+
     const img_base = document.createElement("img")
     img_base.className = "product-card__img--base"
     img_base.alt = `${product.name}`;
@@ -159,8 +162,10 @@ function create_media(product){
     img_alt.alt = `${product.name}, vista alternativa`;
     img_alt.src = `${product.imgSrcHover}`
 
-    div_media.appendChild(img_base);
-    div_media.appendChild(img_alt);
+    redireccionar.appendChild(img_base);
+    redireccionar.appendChild(img_alt);
+
+    div_media.appendChild(redireccionar)
 
     return div_media;  
 }
