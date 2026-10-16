@@ -4,19 +4,24 @@ import {
 } from "../backend/filter_products.js";
 
 const formularioFiltros = document.getElementById("formularioFiltros");
+const productGrid = document.getElementById("product-grid");
 
 let PRECIO_MAX_DEFAULT, PRECIO_MIN_DEFAULT;
 let productos = []; // fuente única de productos, se llena una sola vez
 
-document.addEventListener("DOMContentLoaded", load_items);
-formularioFiltros.addEventListener("submit", retrieveFiltros);
+if (productGrid && formularioFiltros) {
+    document.addEventListener("DOMContentLoaded", load_items);
+    formularioFiltros.addEventListener("submit", retrieveFiltros);
+}
 
 export async function fetch_products(){
     try {
-        const productos = await fetch("../backend/db/db.json");
-        return productos.json()
+        const respuesta = await fetch("/api/products");
+        if (!respuesta.ok) throw new Error(`Error HTTP: ${respuesta.status}`);
+        return await respuesta.json();
     } catch (error) {
-        console.error(`Hubo un error: ${error}`)
+        console.error(`Hubo un error: ${error}`);
+        throw error;
     }
 }
 
@@ -28,7 +33,10 @@ export function obtenerProductos(actualizar = false) {
     if (actualizar || !productosPromise) {
         productosPromise = fetch_products().then(data =>
             Object.entries(data.items).map(([id, producto]) => ({ id, ...producto }))
-        );
+        ).catch(error => {
+            productosPromise = null;
+            throw error;
+        });
     }
     return productosPromise;
 }
@@ -52,6 +60,7 @@ async function load_items(){
 }
 
 export function calcMinMaxPrice(productos){
+    if (productos.length === 0) return {min: 0, max: 0};
   let array_prices = []
   productos.forEach((producto) => {
     let precio_unitario = producto.price;
