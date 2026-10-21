@@ -210,9 +210,21 @@
     letter-spacing: 0;
 }
 
-.product-buy[aria-disabled="true"]:hover {
+.product-buy:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.product-buy:disabled:hover {
     transform: none;
     box-shadow: none;
+}
+
+#product-cart-message {
+    min-height: 1.4em;
+    margin-top: 0.5rem;
+    color: var(--gold);
+    font-size: 0.85rem;
 }
 
 .product-shell :focus-visible {

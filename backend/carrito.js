@@ -1,5 +1,12 @@
 import { obtenerProductos } from "./load_products.js";
-import { CART_STORAGE_KEY, guardarIdsCarrito, leerIdsCarrito } from "./cart_storage.js";
+import {
+    CART_STORAGE_KEY,
+    CART_UPDATED_EVENT,
+    claveEntradaCarrito,
+    guardarCarrito,
+    leerCarrito
+} from "./cart_storage.js";
+
 const cartButton = document.getElementById("cart-btn");
 const cartItems = document.getElementById("cart-items");
 const cartSubtotal = document.getElementById("cart-subtotal");
@@ -11,6 +18,10 @@ cartLoader.src = new URL("../frontend/src/loading-orange.gif", import.meta.url).
 cartLoader.alt = "Cargando carrito";
 let productosDisponibles = [];
 
+function formatearPrecio(precio) {
+    return `$ ${Number(precio).toLocaleString("es-UY")}`;
+}
+
 function actualizarContador(cantidad) {
     cartBadge.textContent = cantidad;
     cartBadge.hidden = cantidad === 0;
@@ -20,16 +31,11 @@ function actualizarContador(cantidad) {
     );
 }
 
-function formatearPrecio(precio) {
-    return `$ ${Number(precio).toLocaleString("es-UY")}`;
-}
-
-function crearFilaCarrito(producto, cantidad) {
+function crearFilaCarrito(producto, entrada) {
     const fila = document.createElement("article");
     fila.className = "cart-item";
-    fila.dataset.productId = String(producto.id);
-    fila.dataset.quantity = String(cantidad);
-    fila.dataset.unitPrice = String(Number(producto.price));
+    fila.dataset.productId = entrada.productId;
+    fila.dataset.cartKey = claveEntradaCarrito(entrada);
 
     const imagen = document.createElement("img");
     imagen.className = "cart-item__img";
@@ -44,29 +50,35 @@ function crearFilaCarrito(producto, cantidad) {
     nombre.className = "cart-item__name";
     nombre.textContent = producto.name;
 
+    const variante = document.createElement("p");
+    variante.className = "cart-item__variant";
+    variante.textContent = `Color: ${entrada.color} · Talle: ${entrada.size}`;
+
     const detalles = document.createElement("div");
     detalles.className = "cart-item__details";
 
     const cantidadControl = document.createElement("div");
     cantidadControl.className = "cart-item__qty";
-    cantidadControl.setAttribute("aria-label", `Cantidad: ${cantidad}`);
+    cantidadControl.setAttribute("aria-label", `Cantidad: ${entrada.quantity}`);
 
     const disminuir = document.createElement("button");
     disminuir.type = "button";
     disminuir.className = "cart-item__quantity-btn";
     disminuir.dataset.action = "decrease";
     disminuir.textContent = "−";
+    disminuir.disabled = entrada.quantity <= 1;
     disminuir.setAttribute("aria-label", `Disminuir cantidad de ${producto.name}`);
 
     const valorCantidad = document.createElement("span");
     valorCantidad.className = "cart-item__quantity-value";
-    valorCantidad.textContent = String(cantidad);
+    valorCantidad.textContent = String(entrada.quantity);
 
     const aumentar = document.createElement("button");
     aumentar.type = "button";
     aumentar.className = "cart-item__quantity-btn";
     aumentar.dataset.action = "increase";
     aumentar.textContent = "+";
+    aumentar.disabled = entrada.quantity >= 15;
     aumentar.setAttribute("aria-label", `Aumentar cantidad de ${producto.name}`);
 
     cantidadControl.append(disminuir, valorCantidad, aumentar);
@@ -79,49 +91,47 @@ function crearFilaCarrito(producto, cantidad) {
     eliminar.type = "button";
     eliminar.className = "cart-item__remove";
     eliminar.textContent = "\u00d7";
-    eliminar.setAttribute("aria-label", `Eliminar ${producto.name} del carrito`);
+    eliminar.setAttribute(
+        "aria-label",
+        `Eliminar ${producto.name}, color ${entrada.color}, talle ${entrada.size}`
+    );
 
     detalles.append(cantidadControl, precio);
-    informacion.append(nombre, detalles);
+    informacion.append(nombre, variante, detalles);
     fila.append(imagen, informacion, eliminar);
     return fila;
 }
 
 function renderizarCarrito(productos) {
-    const ids = leerIdsCarrito();
+    const entradas = leerCarrito();
     const productosPorId = new Map(productos.map(producto => [String(producto.id), producto]));
-    const cantidades = new Map();
-    ids.forEach(id => cantidades.set(id, (cantidades.get(id) || 0) + 1));
-    const seleccionados = Array.from(cantidades, ([id, cantidad]) => ({
-        producto: productosPorId.get(id),
-        cantidad
-    })).filter(item => item.producto);
+    const entradasValidas = entradas.filter(entrada => {
+        const producto = productosPorId.get(entrada.productId);
+        return producto &&
+            Array.isArray(producto.colors) && producto.colors.includes(entrada.color) &&
+            Array.isArray(producto.size) && producto.size.includes(entrada.size);
+    });
 
     cartItems.replaceChildren();
-    seleccionados.forEach(({ producto, cantidad }) =>
-        cartItems.appendChild(crearFilaCarrito(producto, cantidad))
+    entradasValidas.forEach(entrada =>
+        cartItems.appendChild(crearFilaCarrito(productosPorId.get(entrada.productId), entrada))
     );
 
-    if (seleccionados.length === 0) {
+    if (entradasValidas.length === 0) {
         const vacio = document.createElement("p");
         vacio.className = "cart-empty";
         vacio.textContent = "Tu carrito está vacío.";
         cartItems.appendChild(vacio);
     }
 
-    const subtotal = seleccionados.reduce(
-        (total, { producto, cantidad }) => total + Number(producto.price) * cantidad,
-        0
-    );
+    const subtotal = entradasValidas.reduce((total, entrada) => {
+        const producto = productosPorId.get(entrada.productId);
+        return total + Number(producto.price) * entrada.quantity;
+    }, 0);
     cartSubtotal.textContent = formatearPrecio(subtotal);
-    actualizarContador(seleccionados.reduce((total, item) => total + item.cantidad, 0));
+    actualizarContador(entradasValidas.reduce((total, entrada) => total + entrada.quantity, 0));
 
-    const idsValidos = seleccionados.flatMap(({ producto, cantidad }) =>
-        Array(cantidad).fill(String(producto.id))
-    );
-    if (idsValidos.length !== ids.length) {
-        guardarIdsCarrito(idsValidos);
-    }
+    if (entradasValidas.length !== entradas.length) guardarCarrito(entradasValidas);
 }
 
 cartItems.addEventListener("click", event => {
@@ -130,41 +140,32 @@ cartItems.addEventListener("click", event => {
     if (!botonEliminar && !botonCantidad) return;
 
     const fila = event.target.closest(".cart-item");
-    const id = fila.dataset.productId;
-    let ids = leerIdsCarrito();
+    const clave = fila.dataset.cartKey;
+    const entradas = leerCarrito();
+    const entrada = entradas.find(item => claveEntradaCarrito(item) === clave);
+    if (!entrada) return;
 
+    let nuevasEntradas;
     if (botonEliminar) {
-        ids = ids.filter(productId => productId !== id);
-    } else if (botonCantidad.dataset.action === "increase") {
-        ids.push(id);
+        nuevasEntradas = entradas.filter(item => claveEntradaCarrito(item) !== clave);
     } else {
-        const index = ids.indexOf(id);
-        if (index !== -1) ids.splice(index, 1);
+        const cantidad = botonCantidad.dataset.action === "increase"
+            ? Math.min(15, entrada.quantity + 1)
+            : Math.max(1, entrada.quantity - 1);
+        nuevasEntradas = entradas.map(item =>
+            claveEntradaCarrito(item) === clave ? { ...item, quantity: cantidad } : item
+        );
     }
 
-    guardarIdsCarrito(ids);
+    guardarCarrito(nuevasEntradas);
     renderizarCarrito(productosDisponibles);
-});
-
-document.addEventListener("click", event => {
-    const botonAgregar = event.target.closest(".product-card__cart");
-    if (!botonAgregar) return;
-
-    const ids = leerIdsCarrito();
-    ids.push(botonAgregar.dataset.productId);
-    guardarIdsCarrito(ids);
-    actualizarContador(ids.length);
-    if (cartDrawer.classList.contains("is-open") && productosDisponibles.length) {
-        renderizarCarrito(productosDisponibles);
-    }
 });
 
 cartButton.addEventListener("click", async () => {
     cartItems.replaceChildren(cartLoader);
     try {
-        const productos = await obtenerProductos(true);
-        productosDisponibles = productos;
-        renderizarCarrito(productos);
+        productosDisponibles = await obtenerProductos(true);
+        renderizarCarrito(productosDisponibles);
     } catch (error) {
         console.error("No se pudo cargar el carrito:", error);
         cartItems.replaceChildren();
@@ -177,13 +178,16 @@ cartButton.addEventListener("click", async () => {
     }
 });
 
-window.addEventListener("storage", event => {
-    if (event.key === CART_STORAGE_KEY) {
-        actualizarContador(leerIdsCarrito().length);
-        if (cartDrawer.classList.contains("is-open") && productosDisponibles.length) {
-            renderizarCarrito(productosDisponibles);
-        }
+function actualizarCarritoPorCambio() {
+    actualizarContador(leerCarrito().reduce((total, entrada) => total + entrada.quantity, 0));
+    if (cartDrawer.classList.contains("is-open") && productosDisponibles.length) {
+        renderizarCarrito(productosDisponibles);
     }
+}
+
+window.addEventListener(CART_UPDATED_EVENT, actualizarCarritoPorCambio);
+window.addEventListener("storage", event => {
+    if (event.key === CART_STORAGE_KEY) actualizarCarritoPorCambio();
 });
 
-actualizarContador(leerIdsCarrito().length);
+actualizarContador(leerCarrito().reduce((total, entrada) => total + entrada.quantity, 0));

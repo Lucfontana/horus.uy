@@ -1,9 +1,19 @@
+import {
+  claveEntradaCarrito,
+  guardarCarrito,
+  leerCarrito
+} from "../../backend/cart_storage.js";
+
 const API_BASE_URL = "/api/products";
 const MASTER_SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 const COLOR_SWATCHES = {
   negro: "#1a1a1a", blanco: "#f5f5f0", beige: "#d8c9a8", camel: "#b98d54",
   verde: "#4a5c45", azul: "#33475b", bordo: "#6b2737", gris: "#8a8a86"
 };
+let productoActual = null;
+let colorSeleccionado = "";
+let talleSeleccionado = "";
+let agregandoAlCarrito = false;
 
 // GET /api/products/:id returns a product, optionally wrapped in data or items[id].
 export async function fetchProduct(id) {
@@ -43,7 +53,7 @@ function initGallery(product) {
   });
 }
 
-function initRadioGroup(container, values, availableValues, createButton, onSelect) {
+function initRadioGroup(container, values, availableValues, createButton, onSelect, autoSelect = true) {
   container.replaceChildren();
   const buttons = values.map(value => {
     const button = createButton(value);
@@ -83,12 +93,22 @@ function initRadioGroup(container, values, availableValues, createButton, onSele
     onSelect(value);
   }
   const firstAvailable = buttons.findIndex(button => button.getAttribute("aria-disabled") !== "true");
-  if (firstAvailable >= 0) select(buttons[firstAvailable], values[firstAvailable]);
+  if (firstAvailable >= 0 && autoSelect) select(buttons[firstAvailable], values[firstAvailable]);
+  else if (firstAvailable >= 0) buttons[firstAvailable].tabIndex = 0;
   else if (buttons.length) buttons[0].tabIndex = 0;
+}
+
+function actualizarBotonCompra() {
+  const boton = document.getElementById("product-buy");
+  boton.disabled = agregandoAlCarrito ||
+    !productoActual ||
+    !colorSeleccionado ||
+    !talleSeleccionado;
 }
 
 function initColors(product) {
   const colors = Array.isArray(product.colors) ? product.colors : [];
+  colorSeleccionado = "";
   document.getElementById("selected-color").textContent = colors.length ? "" : "No disponible";
   initRadioGroup(document.getElementById("product-colors"), colors, colors, color => {
     const key = color.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -99,21 +119,30 @@ function initColors(product) {
     button.setAttribute("aria-label", color);
     button.title = color;
     return button;
-  }, color => { document.getElementById("selected-color").textContent = color; });
+  }, color => {
+    colorSeleccionado = color;
+    document.getElementById("selected-color").textContent = color;
+    actualizarBotonCompra();
+  }, false);
 }
 
 function initSizes(product) {
   const available = Array.isArray(product.size) ? product.size : [];
   const sizes = [...new Set([...MASTER_SIZES, ...available])];
+  talleSeleccionado = "";
   document.getElementById("selected-size").textContent = available.length ? "" : "Sin stock";
   initRadioGroup(document.getElementById("product-sizes"), sizes, available, size => {
     const button = document.createElement("button");
     button.className = "chip";
     button.textContent = size;
     return button;
-  }, size => { document.getElementById("selected-size").textContent = size; });
+  }, size => {
+    talleSeleccionado = size;
+    document.getElementById("selected-size").textContent = size;
+    actualizarBotonCompra();
+  }, false);
   document.getElementById("product-stock").hidden = available.length > 0;
-  document.getElementById("product-buy").setAttribute("aria-disabled", String(available.length === 0));
+  actualizarBotonCompra();
 }
 
 function initQuantity() {
@@ -134,6 +163,9 @@ function initQuantity() {
 }
 
 function renderProduct(product) {
+  productoActual = product;
+  colorSeleccionado = "";
+  talleSeleccionado = "";
   document.getElementById("product-name").textContent = product.name;
   document.getElementById("product-categories").textContent = (product.categories || []).join(" · ");
   document.getElementById("product-price").textContent = `$${product.price}`;
@@ -143,7 +175,58 @@ function renderProduct(product) {
   initColors(product);
   initSizes(product);
   initQuantity();
-  // TODO: Implementar la compra cuando se defina el flujo.
+  actualizarBotonCompra();
+}
+
+async function agregarAlCarrito() {
+  if (!productoActual || !colorSeleccionado || !talleSeleccionado || agregandoAlCarrito) return;
+
+  const mensaje = document.getElementById("product-cart-message");
+  const boton = document.getElementById("product-buy");
+  const cantidad = Number(document.getElementById("product-quantity").value);
+  mensaje.textContent = "";
+  agregandoAlCarrito = true;
+  actualizarBotonCompra();
+
+  try {
+    const respuesta = await fetch(`${API_BASE_URL}/${encodeURIComponent(productoActual.id)}/variants`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ color: colorSeleccionado, size: talleSeleccionado })
+    });
+    const resultado = await respuesta.json();
+    if (!respuesta.ok) throw new Error(resultado.error || "La variante seleccionada no está disponible.");
+
+    const entrada = {
+      productId: String(productoActual.id),
+      name: productoActual.name,
+      imgSrc: productoActual.imgSrc,
+      price: Number(productoActual.price),
+      color: colorSeleccionado,
+      size: talleSeleccionado,
+      quantity: cantidad
+    };
+    const carrito = leerCarrito();
+    const clave = claveEntradaCarrito(entrada);
+    const existente = carrito.find(item => claveEntradaCarrito(item) === clave);
+    const entradasActualizadas = existente
+      ? carrito.map(item => claveEntradaCarrito(item) === clave
+        ? { ...item, quantity: Math.min(15, item.quantity + cantidad) }
+        : item)
+      : [...carrito, entrada];
+
+    if (!guardarCarrito(entradasActualizadas)) {
+      throw new Error("No se pudo guardar el carrito en este dispositivo.");
+    }
+    mensaje.textContent = "Producto agregado al carrito.";
+  } catch (error) {
+    console.error("No se pudo agregar el producto al carrito:", error);
+    mensaje.textContent = error.message || "No se pudo agregar el producto. Intentá nuevamente.";
+  } finally {
+    agregandoAlCarrito = false;
+    actualizarBotonCompra();
+    boton.focus();
+  }
 }
 
 function setPageState(state) {
@@ -176,4 +259,5 @@ async function loadProduct() {
 }
 
 document.getElementById("retry-product").addEventListener("click", loadProduct);
+document.getElementById("product-buy").addEventListener("click", agregarAlCarrito);
 loadProduct();
