@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('horus-theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto | Horus Uruguay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="styles/catalog_styles.css">
+  <link rel="stylesheet" href="styles/cart.css">
+  <link rel="stylesheet" href="styles/producto.css">
+</head>
+<body>
+      <header class="site-header" id="site-header">
+    <div class="site-header__inner">
+      <a href="/frontend/index.html" class="brand" aria-label="Horus Uruguay - Inicio">
+        <img src="src/logo.png" alt="Logo Horus Uruguay" id="logo">
+      </a>
+
+      <nav class="nav" id="nav">
+        <button type="button" class="nav-close" id="nav-close" aria-label="Cerrar menú de navegación">
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="nav__catalog-content">
+          <form class="nav-search" role="search" action="#" onsubmit="return false;">
+            <svg class="nav-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="search" name="q" placeholder="Buscar productos…" aria-label="Buscar productos">
+          </form>
+        </div>
+      </nav>
+
+      <div class="site-header__actions">
+        <button type="button" class="icon-btn" id="cart-btn" aria-expanded="false" aria-controls="cart-drawer" aria-label="Ver carrito (0 productos)" style="position: relative;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 7h12l-1 13H7L6 7Z"></path>
+            <path d="M9 7a3 3 0 0 1 6 0"></path>
+          </svg>
+          <span class="icon-btn__badge" hidden>0</span>
+        </button>
+
+        <button type="button" class="icon-btn" id="profile-btn" aria-label="Mi cuenta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.5"></circle>
+            <path d="M4.5 20c1.5-4 5-6 7.5-6s6 2 7.5 6"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Cambiar a modo claro">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="12" y1="2" x2="12" y2="4.5"></line>
+            <line x1="12" y1="19.5" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="4.5" y2="12"></line>
+            <line x1="19.5" y1="12" x2="22" y2="12"></line>
+            <line x1="4.9" y1="4.9" x2="6.6" y2="6.6"></line>
+            <line x1="17.4" y1="17.4" x2="19.1" y2="19.1"></line>
+            <line x1="4.9" y1="19.1" x2="6.6" y2="17.4"></line>
+            <line x1="17.4" y1="6.6" x2="19.1" y2="4.9"></line>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"></path>
+          </svg>
+        </button>
+
+        <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú de navegación">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-overlay" id="nav-overlay"></div>
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer" aria-hidden="true" aria-label="Carrito de compras">
+    <div class="cart-drawer__header">
+      <h2 class="cart-drawer__title">Tu carrito</h2>
+      <button type="button" class="cart-drawer__close" id="cart-drawer-close" aria-label="Cerrar carrito">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div class="cart-drawer__items" id="cart-items" aria-live="polite"></div>
+    <div class="cart-drawer__footer">
+      <div class="cart-drawer__subtotal">
+        <span>Subtotal</span>
+        <span id="cart-subtotal">$ 0</span>
+      </div>
+      <button type="button" class="cart-drawer__checkout">Finalizar compra</button>
+    </div>
+  </aside>
+
+  <main class="product-main">
+    <div class="product-shell">
+      <nav class="product-breadcrumb" aria-label="Breadcrumb"><a href="catalogo.html">Catálogo</a></nav>
+      <div id="product-status" class="product-status" role="status" aria-live="polite">
+        <h1 id="status-title">Cargando producto…</h1>
+        <a id="catalog-link" href="catalogo.html" hidden>Volver al catálogo</a>
+        <button id="retry-product" type="button" class="btn btn--outline" hidden>Reintentar</button>
+      </div>
+      <article id="product-detail" class="product-detail reveal" aria-labelledby="product-name" hidden>
+        <div class="product-gallery">
+          <div class="product-thumbnails" id="product-thumbnails" aria-label="Imágenes del producto"></div>
+          <div class="product-image-frame"><img id="product-image" alt=""></div>
+        </div>
+        <div class="product-info">
+          <span id="product-badge" class="product-card__badge" hidden>Nuevo</span>
+          <p id="product-categories" class="product-card__category"></p>
+          <h1 id="product-name"></h1>
+          <p id="product-price" class="product-card__price"></p>
+          <div class="product-option">
+            <p id="color-label" aria-live="polite">Color: <span id="selected-color"></span></p>
+            <div id="product-colors" class="swatches" role="radiogroup" aria-labelledby="color-label"></div>
+          </div>
+          <div class="product-option">
+            <p id="size-label" aria-live="polite">Talle: <span id="selected-size"></span></p>
+            <div id="product-sizes" class="size-chips" role="radiogroup" aria-labelledby="size-label"></div>
+            <p id="product-stock" role="status" hidden>Sin stock</p>
+          </div>
+          <div class="product-option">
+            <label for="product-quantity">Cantidad</label>
+            <div class="product-quantity">
+              <button type="button" id="quantity-minus" aria-label="Reducir cantidad" title="Reducir cantidad">−</button>
+              <input id="product-quantity" type="text" inputmode="numeric" pattern="[0-9]*" value="1" autocomplete="off" aria-describedby="quantity-bounds">
+              <button type="button" id="quantity-plus" aria-label="Aumentar cantidad" title="Aumentar cantidad">+</button>
+            </div>
+            <span id="quantity-bounds" class="product-sr-only">Entre 1 y 15 unidades</span>
+          </div>
+          <button id="product-buy" type="button" class="btn-action btn-action--primary product-buy" disabled>Agregar al carrito</button>
+          <p id="product-cart-message" role="status" aria-live="polite"></p>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 horus.uy. Todos los derechos reservados.</p>
+    <nav aria-label="Enlaces">
+      <ul>
+        <li><a href="index.html#contacto">Contacto</a></li>
+        <li><a href="index.html#ubicacion">Ubicación</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Redes sociales">
+      <ul>
+        <li><a href="https://instagram.com/horus.uy" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+        <li><a href="https://facebook.com/horus.uy" target="_blank" rel="noopener noreferrer">Facebook</a></li>
+        <li><a href="https://tiktok.com/@horus.uy" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+      </ul>
+    </nav>
+  </footer>
+  <script src="../backend/theme.js"></script>
+  <script src="../backend/navbar.js"></script>
+  <script type="module" src="../backend/carrito.js"></script>
+  <script type="module" src="scripts/producto.js"></script>
+</body>
+</html>

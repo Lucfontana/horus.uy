@@ -1,5 +1,12 @@
 import { obtenerProductos } from "./load_products.js";
-import { CART_STORAGE_KEY, guardarIdsCarrito, leerIdsCarrito } from "./cart_storage.js";
+import {
+    CART_STORAGE_KEY,
+    CART_UPDATED_EVENT,
+    claveEntradaCarrito,
+    guardarCarrito,
+    leerCarrito
+} from "./cart_storage.js";
+
 const cartItems = document.getElementById("checkout-items");
 const subtotalElement = document.getElementById("checkout-subtotal");
 const totalElement = document.getElementById("checkout-total");
@@ -12,10 +19,11 @@ function formatearPrecio(precio) {
     })}`;
 }
 
-function crearFilaCarrito(producto, cantidad) {
+function crearFilaCarrito(producto, entrada) {
     const fila = document.createElement("article");
     fila.className = "checkout-item";
-    fila.dataset.productId = String(producto.id);
+    fila.dataset.productId = entrada.productId;
+    fila.dataset.cartKey = claveEntradaCarrito(entrada);
 
     const productoInfo = document.createElement("div");
     productoInfo.className = "checkout-item__product";
@@ -38,60 +46,71 @@ function crearFilaCarrito(producto, cantidad) {
     categoria.textContent = Array.isArray(producto.categories)
         ? producto.categories.join(" · ")
         : "Horus Uruguay";
-    informacion.append(nombre, categoria);
+
+    const variante = document.createElement("p");
+    variante.className = "checkout-item__category";
+    variante.textContent = `Color: ${entrada.color} · Talle: ${entrada.size}`;
+    informacion.append(nombre, categoria, variante);
     productoInfo.append(imagen, informacion);
 
     const cantidadControl = document.createElement("div");
     cantidadControl.className = "checkout-item__quantity";
-    cantidadControl.setAttribute("aria-label", `Cantidad de ${producto.name}: ${cantidad}`);
+    cantidadControl.setAttribute(
+        "aria-label",
+        `Cantidad de ${producto.name}: ${entrada.quantity}`
+    );
 
     const disminuir = document.createElement("button");
     disminuir.type = "button";
     disminuir.dataset.action = "decrease";
     disminuir.textContent = "−";
-    disminuir.disabled = cantidad <= 1;
+    disminuir.disabled = entrada.quantity <= 1;
     disminuir.setAttribute("aria-label", `Disminuir cantidad de ${producto.name}`);
 
     const valorCantidad = document.createElement("span");
     valorCantidad.className = "checkout-item__quantity-value";
-    valorCantidad.textContent = String(cantidad);
+    valorCantidad.textContent = String(entrada.quantity);
 
     const aumentar = document.createElement("button");
     aumentar.type = "button";
     aumentar.dataset.action = "increase";
     aumentar.textContent = "+";
+    aumentar.disabled = entrada.quantity >= 15;
     aumentar.setAttribute("aria-label", `Aumentar cantidad de ${producto.name}`);
 
     cantidadControl.append(disminuir, valorCantidad, aumentar);
 
     const precio = document.createElement("span");
     precio.className = "checkout-item__price";
-    precio.textContent = formatearPrecio(Number(producto.price) * cantidad);
+    precio.textContent = formatearPrecio(Number(producto.price) * entrada.quantity);
 
     const eliminar = document.createElement("button");
     eliminar.type = "button";
     eliminar.className = "checkout-item__remove";
     eliminar.dataset.action = "remove";
     eliminar.textContent = "×";
-    eliminar.setAttribute("aria-label", `Eliminar ${producto.name} del carrito`);
+    eliminar.setAttribute(
+        "aria-label",
+        `Eliminar ${producto.name}, color ${entrada.color}, talle ${entrada.size}`
+    );
 
     fila.append(productoInfo, cantidadControl, precio, eliminar);
     return fila;
 }
 
 function renderizarCarrito(productos) {
-    const ids = leerIdsCarrito();
+    const entradas = leerCarrito();
     const productosPorId = new Map(productos.map(producto => [String(producto.id), producto]));
-    const cantidades = new Map();
-    ids.forEach(id => cantidades.set(id, (cantidades.get(id) || 0) + 1));
-    const seleccionados = Array.from(cantidades, ([id, cantidad]) => ({
-        producto: productosPorId.get(id),
-        cantidad
-    })).filter(item => item.producto);
+    const entradasValidas = entradas.filter(entrada => {
+        const producto = productosPorId.get(entrada.productId);
+        return producto &&
+            Array.isArray(producto.colors) && producto.colors.includes(entrada.color) &&
+            Array.isArray(producto.size) && producto.size.includes(entrada.size);
+    });
 
     cartItems.replaceChildren();
 
-    if (seleccionados.length === 0) {
+    if (entradasValidas.length === 0) {
         const vacio = document.createElement("div");
         vacio.className = "checkout-empty";
 
@@ -105,22 +124,21 @@ function renderizarCarrito(productos) {
         vacio.append(mensaje, enlace);
         cartItems.appendChild(vacio);
     } else {
-        seleccionados.forEach(({ producto, cantidad }) =>
-            cartItems.appendChild(crearFilaCarrito(producto, cantidad))
+        entradasValidas.forEach(entrada =>
+            cartItems.appendChild(
+                crearFilaCarrito(productosPorId.get(entrada.productId), entrada)
+            )
         );
     }
 
-    const subtotal = seleccionados.reduce(
-        (total, { producto, cantidad }) => total + Number(producto.price) * cantidad,
-        0
-    );
+    const subtotal = entradasValidas.reduce((total, entrada) => {
+        const producto = productosPorId.get(entrada.productId);
+        return total + Number(producto.price) * entrada.quantity;
+    }, 0);
     subtotalElement.textContent = formatearPrecio(subtotal);
     totalElement.textContent = formatearPrecio(subtotal);
 
-    const idsValidos = seleccionados.flatMap(({ producto, cantidad }) =>
-        Array(cantidad).fill(String(producto.id))
-    );
-    if (idsValidos.length !== ids.length) guardarIdsCarrito(idsValidos);
+    if (entradasValidas.length !== entradas.length) guardarCarrito(entradasValidas);
 }
 
 cartItems.addEventListener("click", event => {
@@ -128,25 +146,34 @@ cartItems.addEventListener("click", event => {
     if (!boton) return;
 
     const fila = boton.closest(".checkout-item");
-    const id = fila.dataset.productId;
-    let ids = leerIdsCarrito();
+    const clave = fila.dataset.cartKey;
+    const entradas = leerCarrito();
+    const entrada = entradas.find(item => claveEntradaCarrito(item) === clave);
+    if (!entrada) return;
 
+    let entradasActualizadas;
     if (boton.dataset.action === "remove") {
-        ids = ids.filter(productId => productId !== id);
-    } else if (boton.dataset.action === "increase") {
-        ids.push(id);
+        entradasActualizadas = entradas.filter(item => claveEntradaCarrito(item) !== clave);
     } else {
-        if (ids.filter(productId => productId === id).length <= 1) return;
-        const index = ids.indexOf(id);
-        if (index !== -1) ids.splice(index, 1);
+        const quantity = boton.dataset.action === "increase"
+            ? Math.min(15, entrada.quantity + 1)
+            : Math.max(1, entrada.quantity - 1);
+        entradasActualizadas = entradas.map(item =>
+            claveEntradaCarrito(item) === clave ? { ...item, quantity } : item
+        );
     }
 
-    guardarIdsCarrito(ids);
+    guardarCarrito(entradasActualizadas);
     renderizarCarrito(productosDisponibles);
 });
 
+function actualizarCarritoPorCambio() {
+    if (productosDisponibles.length) renderizarCarrito(productosDisponibles);
+}
+
+window.addEventListener(CART_UPDATED_EVENT, actualizarCarritoPorCambio);
 window.addEventListener("storage", event => {
-    if (event.key === CART_STORAGE_KEY) renderizarCarrito(productosDisponibles);
+    if (event.key === CART_STORAGE_KEY) actualizarCarritoPorCambio();
 });
 
 async function cargarCarrito() {

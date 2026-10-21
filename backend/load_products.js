@@ -61,21 +61,21 @@ async function load_items(){
 
 export function calcMinMaxPrice(productos){
     if (productos.length === 0) return {min: 0, max: 0};
-  let array_prices = []
-  productos.forEach((producto) => {
+let array_prices = []
+productos.forEach((producto) => {
     let precio_unitario = producto.price;
     array_prices.push(precio_unitario)
-  })
-  console.log(`Precios individuales: ${array_prices}`)
+})
+console.log(`Precios individuales: ${array_prices}`)
 
-  //Busca el numero más pequeño, comparando valor por valor
-  //acc mantiene el número más pequeño, val va iterando por los otros
-  let minPrice = array_prices.reduce((acc, val) => Math.min(acc, val));
-  let maxPrice = array_prices.reduce((acc, val) => Math.max(acc, val));
+//Busca el numero más pequeño, comparando valor por valor
+//acc mantiene el número más pequeño, val va iterando por los otros
+let minPrice = array_prices.reduce((acc, val) => Math.min(acc, val));
+let maxPrice = array_prices.reduce((acc, val) => Math.max(acc, val));
 
-  //TODO: DENTRO DE ESTA FUNCION, ACTUALIZAR LOS VALUE DE PRECIO
-  console.log(`Min: ${minPrice}, max: ${maxPrice}`)
-  return {min: minPrice, max: maxPrice}
+//TODO: DENTRO DE ESTA FUNCION, ACTUALIZAR LOS VALUE DE PRECIO
+console.log(`Min: ${minPrice}, max: ${maxPrice}`)
+return {min: minPrice, max: maxPrice}
 }
 
 function retrieveFiltros(e) {
@@ -149,6 +149,9 @@ function create_media(product){
         div_media.appendChild(badge_new);
     }
 
+    const redireccionar = document.createElement("a");
+    redireccionar.href = `/frontend/producto.html?id=${product.id}`;
+
     const img_base = document.createElement("img")
     img_base.className = "product-card__img--base"
     img_base.alt = `${product.name}`;
@@ -159,8 +162,11 @@ function create_media(product){
     img_alt.alt = `${product.name}, vista alternativa`;
     img_alt.src = `${product.imgSrcHover}`
 
-    div_media.appendChild(img_base);
-    div_media.appendChild(img_alt);
+    redireccionar.appendChild(img_base);
+    redireccionar.appendChild(img_alt);
+
+
+    div_media.appendChild(redireccionar)
 
     return div_media;  
 }
@@ -185,15 +191,6 @@ function create_body(product){
     const price = document.createElement("span");
     price.textContent = `$${product.price}`;
     div_footer.appendChild(price);
-
-    const icon_cart = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z"></path><path d="M9 7a3 3 0 0 1 6 0"></path></svg>`
-    const button_addCart = document.createElement("button")
-    button_addCart.innerHTML = `${icon_cart}`
-    button_addCart.type = "button"
-    button_addCart.className = "product-card__cart"
-    button_addCart.dataset.productId = product.id;
-    button_addCart.ariaLabel = `Agregar ${product.name} al carrito`
-    div_footer.appendChild(button_addCart)
 
     return div_body
 

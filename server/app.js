@@ -60,6 +60,27 @@ export function createApp({
         response.json({ id: String(producto._id), ...serializarProducto(producto) });
     });
 
+    app.post("/api/products/:id/variants", async (request, response) => {
+        const producto = await buscarProducto(request.params.id);
+        if (!producto) return response.status(404).json({ error: "Producto no encontrado." });
+
+        const { color, size } = request.body || {};
+        if (
+            typeof color !== "string" || !color.trim() ||
+            typeof size !== "string" || !size.trim()
+        ) {
+            return response.status(400).json({ error: "Seleccioná un color y un talle." });
+        }
+        if (
+            !Array.isArray(producto.colors) || !producto.colors.includes(color) ||
+            !Array.isArray(producto.size) || !producto.size.includes(size)
+        ) {
+            return response.status(400).json({ error: "El color o talle no está disponible para este producto." });
+        }
+
+        return response.status(200).json({ valid: true });
+    });
+
     app.get("/", (request, response) => response.redirect("/frontend/index.html"));
     app.use("/frontend", express.static(frontendDirectory, { dotfiles: "deny" }));
     app.get("/backend/:filename", (request, response, next) => {
