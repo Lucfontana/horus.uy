@@ -2,6 +2,64 @@
 
 El contexto original del proyecto está en [context.md](context.md).
 
+## Migración a React + Vite
+
+La aplicación React está disponible en `/react/` y usa rutas hash para permitir
+recargas y enlaces directos sin cambiar las rutas de la API:
+
+| Vista | Ruta |
+| --- | --- |
+| Inicio | `/react/` |
+| Catálogo | `/react/#/catalogo` |
+| Producto | `/react/#/producto?id=ID` |
+| Carrito | Drawer del encabezado o `/react/#/carrito` |
+| Checkout | `/react/#/checkout` |
+| Administración | `/react/#/administracion` |
+
+Las páginas originales siguen disponibles en `/frontend/` como referencia.
+React reutiliza las hojas de estilo originales, los filtros y la persistencia
+del carrito. No importa los scripts antiguos que renderizan el DOM. Los servicios
+de `src/services/` consultan la misma API Express.
+
+Producto conserva la validación de variantes por API. Drawer y checkout comparten
+estado, sincronizan cambios entre pestañas y contrastan las variantes y precios
+con el catálogo al navegar. Las variantes que ya no existen no se muestran.
+Administración permite listar, crear, editar y eliminar productos y categorías;
+las escrituras necesitan MongoDB, no el modo de demostración.
+
+No hay todavía API de pedidos, pagos, cupones ni contacto. Las vistas lo indican
+al intentar esas acciones y no simulan operaciones exitosas. La administración
+conserva el acceso público existente: esta migración no añade autenticación.
+
+Desde `horus.uy/`, iniciá Express en una terminal:
+
+```bash
+npm run demo
+```
+
+O usá `npm run dev:server` para conectar MongoDB con las variables de `.env`.
+En otra terminal iniciá Vite:
+
+```bash
+npm run dev
+```
+
+Abrí `http://localhost:5173/react/` (o el puerto que indique Vite). El proxy
+envía `/api`, `/frontend` y `/backend` a Express en el puerto 3000. No expongas
+credenciales de MongoDB en variables `VITE_*`: son públicas en el navegador.
+
+```bash
+npm run lint
+npm run build
+```
+
+ESLint revisa `src/`, las configuraciones nuevas y el módulo de filtros
+reutilizado; aún no cubre todos los scripts antiguos ni el servidor. El build
+se genera en `dist/` y Express lo sirve en `http://localhost:3000/react/`.
+Los recursos y páginas antiguas siguen siendo servidos por Express.
+`npm run preview` previsualiza solamente el build; para usar la API y recursos
+existentes, comprobá el build desde Express.
+
 ## Requisitos
 
 - Node.js 22.16 o superior y npm.
@@ -80,7 +138,7 @@ después del seed no actualiza los documentos ya importados.
 ## Iniciar con MongoDB
 
 ```bash
-npm run dev
+npm run dev:server
 ```
 
 Reinicia Node al cambiar archivos del servidor. Para iniciar sin watcher:
@@ -89,7 +147,7 @@ Reinicia Node al cambiar archivos del servidor. Para iniciar sin watcher:
 npm start
 ```
 
-Ambos comandos cargan `.env` y conectan MongoDB antes de abrir el puerto HTTP.
+`npm run dev:server` y `npm start` cargan `.env` y conectan MongoDB antes de abrir el puerto HTTP.
 Si la URI es inválida o la base no está disponible, terminan con un error;
 no sustituyen los datos por placeholders. Si el puerto está ocupado, cambiá
 `PORT` en `.env` o ejecutá `PORT=3001 npm run demo` en Linux.

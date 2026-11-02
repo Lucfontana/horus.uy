@@ -311,6 +311,7 @@ export function createApp({
     });
 
     app.get("/", (request, response) => response.redirect("/frontend/index.html"));
+    app.use("/react", express.static(fileURLToPath(new URL("../dist/", import.meta.url)), { dotfiles: "deny" }));
     app.use("/frontend", express.static(frontendDirectory, { dotfiles: "deny" }));
     app.get("/backend/:filename", (request, response, next) => {
         if (!browserScripts.has(request.params.filename)) return next();
