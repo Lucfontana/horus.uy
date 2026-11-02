@@ -37,7 +37,7 @@
 .react-options input:disabled + span { opacity: .4; text-decoration: line-through; cursor: not-allowed; }
 .product-buy { display: inline-flex; gap: .75rem; align-items: center; justify-content: center; }
 .product-shell { margin: auto; }
-.react-admin .admin-sidebar { position: sticky; top: var(--header-h); align-self: start; height: calc(100svh - var(--header-h)); }
+.react-admin .admin-sidebar { position: fixed; top: var(--header-h); bottom: auto; height: calc(100svh - var(--header-h)); }
 .react-admin .admin-main { padding-top: calc(3rem + var(--header-h)); }
 .react-admin .admin-nav button, .react-admin .admin-button { display: inline-flex; align-items: center; gap: .6rem; }
 .react-admin .admin-panel { border: 0; border-radius: 0; background: transparent; padding: 0; }
