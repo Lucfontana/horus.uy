@@ -1,8 +1,16 @@
 import express from "express";
 import mongoose from "mongoose";
 import { fileURLToPath } from "node:url";
+import { User } from "./models/user.js";
+import { Session } from "./models/session.js";
 import { Category } from "./models/category.js";
 import { Product } from "./models/product.js";
+import { leerCarritoUsuario, guardarCarritoUsuario } from "./models/cart.js";
+import { crearRutasCarrito } from "./cart.js";
+import {
+    borrarCookieSesion, crearTokenSesion, hashPassword, hashToken, guardarCookieSesion,
+    leerTokenSesion, verificarContrasena, venceSesion
+} from "./auth.js";
 
 const frontendDirectory = fileURLToPath(new URL("../frontend/", import.meta.url));
 const browserScriptsDirectory = fileURLToPath(new URL("../backend/", import.meta.url));
@@ -90,11 +98,169 @@ export function createApp({
         return categoria;
     },
     eliminarCategoria = id => Category.findByIdAndDelete(id).lean().exec(),
-    categoriaEnUso = id => Product.exists({ categoryIds: id })
+    categoriaEnUso = id => Product.exists({ categoryIds: id }),
+    buscarUsuarioPorEmail = email => User.findOne({ email }).select("+hashed_password").lean().exec(),
+    buscarUsuarioPorId = id => User.findById(id).select("+hashed_password").lean().exec(),
+    crearUsuario = usuario => usuario.save(),
+    actualizarContrasena = async (id, hashedPassword) => {
+        const usuario = await User.findById(id).select("+hashed_password").exec();
+        if (!usuario) return null;
+        usuario.hashed_password = hashedPassword;
+        await usuario.save();
+        return usuario;
+    },
+    crearSesion = sesion => new Session(sesion).save(),
+    buscarSesion = tokenHash => Session.findOne({ tokenHash }).lean().exec(),
+    eliminarSesion = tokenHash => Session.deleteOne({ tokenHash }).exec(),
+    eliminarOtrasSesiones = (userId, tokenHash) =>
+        Session.deleteMany({ userId, tokenHash: { $ne: tokenHash } }).exec(),
+    leerCarrito = leerCarritoUsuario,
+    guardarCarrito = guardarCarritoUsuario
 } = {}) {
     const app = express();
     app.disable("x-powered-by");
     app.use(express.json());
+
+    function usuarioPublico(usuario) {
+        return {
+            id: String(usuario._id),
+            uuid: usuario.uuid,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            email: usuario.email,
+            role: usuario.role,
+            direccion: usuario.direccion || ""
+        };
+    }
+
+    async function autenticar(request, response, next) {
+        const token = leerTokenSesion(request);
+        if (!token) return response.status(401).json({ error: "Iniciá sesión para continuar." });
+        const tokenHash = hashToken(token);
+        try {
+            const sesion = await buscarSesion(tokenHash);
+            if (!sesion || new Date(sesion.expiresAt) <= new Date()) {
+                return response.status(401).json({ error: "La sesión venció. Iniciá sesión nuevamente." });
+            }
+            const usuario = await buscarUsuarioPorId(sesion.userId);
+            if (!usuario) return response.status(401).json({ error: "La sesión no es válida." });
+            request.usuario = usuario;
+            request.tokenHash = tokenHash;
+            return next();
+        } catch {
+            return response.status(503).json({ error: "No se pudo validar la sesión." });
+        }
+    }
+
+    function soloAdmin(request, response, next) {
+        if (request.usuario.role !== "admin") {
+            return response.status(403).json({ error: "Se requiere una cuenta de administrador." });
+        }
+        return next();
+    }
+
+    app.use("/api/cart", autenticar, crearRutasCarrito({
+        buscarProducto, leerCarritoUsuario: leerCarrito, guardarCarritoUsuario: guardarCarrito
+    }));
+
+    app.post("/api/register", async (request, response) => {
+        const { nombre, apellido, email, password } = request.body || {};
+        const nombreLimpio = typeof nombre === "string" ? nombre.trim() : "";
+        const apellidoLimpio = typeof apellido === "string" ? apellido.trim() : "";
+        const emailLimpio = typeof email === "string" ? email.trim().toLowerCase() : "";
+        if (!nombreLimpio || nombreLimpio.length > 80 ||
+            !apellidoLimpio || apellidoLimpio.length > 80 ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpio) || emailLimpio.length > 254 ||
+            typeof password !== "string" || password.length < 8 || password.length > 128) {
+            return response.status(400).json({ error: "Revisá los datos. La contraseña debe tener entre 8 y 128 caracteres." });
+        }
+
+        try {
+            if (await buscarUsuarioPorEmail(emailLimpio)) {
+                return response.status(409).json({ error: "Ya existe una cuenta con ese email." });
+            }
+            const usuario = await crearUsuario(new User({
+                nombre: nombreLimpio,
+                apellido: apellidoLimpio,
+                email: emailLimpio,
+                hashed_password: await hashPassword(password)
+            }));
+            const token = crearTokenSesion();
+            await crearSesion({ userId: usuario._id, tokenHash: hashToken(token), expiresAt: venceSesion() });
+            guardarCookieSesion(response, token);
+            return response.status(201).set("Cache-Control", "no-store").json(usuarioPublico(usuario));
+        } catch (error) {
+            if (error.code === 11000) {
+                return response.status(409).json({ error: "Ya existe una cuenta con ese email." });
+            }
+            if (error instanceof mongoose.Error.ValidationError ||
+                error instanceof mongoose.Error.StrictModeError) {
+                return response.status(400).json({ error: "Los datos de la cuenta no son válidos." });
+            }
+            return response.status(503).json({ error: "No se pudo crear la cuenta." });
+        }
+    });
+
+    app.post("/api/login", async (request, response) => {
+        const email = typeof request.body?.email === "string" ? request.body.email.trim().toLowerCase() : "";
+        const password = typeof request.body?.password === "string" ? request.body.password : "";
+        if (!email || email.length > 254 || !password || password.length > 128) {
+            return response.status(400).json({ error: "Ingresá un email y una contraseña válidos." });
+        }
+        try {
+            const usuario = await buscarUsuarioPorEmail(email);
+            const dummyPassword = `scrypt$${"0".repeat(32)}$${"0".repeat(128)}`;
+            const passwordValida = await verificarContrasena(
+                password, usuario?.hashed_password || dummyPassword
+            );
+            if (!usuario || !passwordValida) {
+                return response.status(401).json({ error: "Email o contraseña incorrectos." });
+            }
+            const token = crearTokenSesion();
+            await crearSesion({ userId: usuario._id, tokenHash: hashToken(token), expiresAt: venceSesion() });
+            guardarCookieSesion(response, token);
+            return response.set("Cache-Control", "no-store").json(usuarioPublico(usuario));
+        } catch {
+            return response.status(503).json({ error: "No se pudo iniciar sesión." });
+        }
+    });
+
+    app.get("/api/session", autenticar, (request, response) => {
+        response.set("Cache-Control", "no-store").json(usuarioPublico(request.usuario));
+    });
+
+    app.post("/api/logout", async (request, response) => {
+        try {
+            const token = leerTokenSesion(request);
+            if (token) await eliminarSesion(hashToken(token));
+            borrarCookieSesion(response);
+            return response.status(204).end();
+        } catch {
+            return response.status(503).json({ error: "No se pudo cerrar sesión." });
+        }
+    });
+
+    app.patch("/api/change-password", autenticar, async (request, response) => {
+        const { currentPassword, newPassword } = request.body || {};
+        if (typeof currentPassword !== "string" || !currentPassword ||
+            typeof newPassword !== "string" || newPassword.length < 8 || newPassword.length > 128) {
+            return response.status(400).json({ error: "Ingresá la contraseña actual y una nueva de al menos 8 caracteres." });
+        }
+        try {
+            const usuario = await buscarUsuarioPorId(request.usuario._id);
+            if (!usuario || !await verificarContrasena(currentPassword, usuario.hashed_password)) {
+                return response.status(400).json({ error: "La contraseña actual es incorrecta." });
+            }
+            if (currentPassword === newPassword) {
+                return response.status(400).json({ error: "La nueva contraseña debe ser diferente." });
+            }
+            await actualizarContrasena(usuario._id, await hashPassword(newPassword));
+            await eliminarOtrasSesiones(usuario._id, request.tokenHash);
+            return response.status(200).json({ message: "La contraseña se actualizó correctamente." });
+        } catch {
+            return response.status(503).json({ error: "No se pudo cambiar la contraseña." });
+        }
+    });
 
     app.get("/api/categories", async (request, response) => {
         const categorias = await listarCategorias();
@@ -104,7 +270,7 @@ export function createApp({
         })));
     });
 
-    app.post("/api/categories", async (request, response) => {
+    app.post("/api/categories", autenticar, soloAdmin, async (request, response) => {
         const name = typeof request.body?.name === "string" ? request.body.name.trim() : "";
         if (!name || name.length > 80) {
             return response.status(400).json({ error: "Ingresá un nombre de categoría de hasta 80 caracteres." });
@@ -127,7 +293,7 @@ export function createApp({
         }
     });
 
-    app.patch("/api/categories/:id", async (request, response) => {
+    app.patch("/api/categories/:id", autenticar, soloAdmin, async (request, response) => {
         const name = typeof request.body?.name === "string" ? request.body.name.trim() : "";
         if (!mongoose.isValidObjectId(request.params.id)) {
             return response.status(404).json({ error: "Categoría no encontrada." });
@@ -153,7 +319,7 @@ export function createApp({
         }
     });
 
-    app.delete("/api/categories/:id", async (request, response) => {
+    app.delete("/api/categories/:id", autenticar, soloAdmin, async (request, response) => {
         if (!mongoose.isValidObjectId(request.params.id)) {
             return response.status(404).json({ error: "Categoría no encontrada." });
         }
@@ -171,7 +337,7 @@ export function createApp({
         }
     });
 
-    app.post("/api/products", async (request, response) => {
+    app.post("/api/products", autenticar, soloAdmin, async (request, response) => {
         const datos = request.body;
         if (!datos || typeof datos !== "object" || Array.isArray(datos)) {
             return response.status(400).json({ error: "Enviá los datos del producto." });
@@ -209,7 +375,7 @@ export function createApp({
         }
     });
 
-    app.patch("/api/products/:id", async (request, response) => {
+    app.patch("/api/products/:id", autenticar, soloAdmin, async (request, response) => {
         const datos = request.body;
         if (!datos || typeof datos !== "object" || Array.isArray(datos) ||
             Object.keys(datos).length === 0) {
@@ -261,7 +427,7 @@ export function createApp({
         }
     });
 
-    app.delete("/api/products/:id", async (request, response) => {
+    app.delete("/api/products/:id", autenticar, soloAdmin, async (request, response) => {
         try {
             const eliminado = await eliminarProducto(request.params.id);
             if (!eliminado) return response.status(404).json({ error: "Producto no encontrado." });

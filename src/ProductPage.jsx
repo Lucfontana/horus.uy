@@ -23,7 +23,7 @@ function ProductDetail({ product, add }) {
             await solicitar(`/api/products/${encodeURIComponent(product.id)}/variants`, {
                 method: "POST", body: JSON.stringify({ color, size })
             });
-            add({ productId: String(product.id), name: product.name, imgSrc: product.imgSrc, price: Number(product.price), color, size, quantity });
+            await add({ productId: String(product.id), name: product.name, imgSrc: product.imgSrc, price: Number(product.price), color, size, quantity });
             setMessage("Producto agregado al carrito.");
         } catch (error) {
             setMessage(error.message);

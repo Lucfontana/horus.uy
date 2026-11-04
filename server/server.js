@@ -17,6 +17,9 @@ async function iniciarServidor() {
         const nombresCategorias = [...new Set(iniciales.flatMap(producto => producto.categories))];
         const categorias = nombresCategorias.map(name => new Category({ name }).toObject());
         const idPorNombre = new Map(categorias.map(categoria => [categoria.name, categoria._id]));
+        const usuarios = [];
+        const sesiones = [];
+        const carritos = new Map();
         const productos = iniciales.map(({ categories: nombres, ...producto }) =>
             new Product({
                 ...producto,
@@ -24,6 +27,19 @@ async function iniciarServidor() {
             }).toObject()
         );
         app = createApp({
+            leerCarrito: async userId => {
+                const key = String(userId);
+                if (!carritos.has(key)) carritos.set(key, { entries: [], mergeIds: [], version: 0 });
+                return structuredClone(carritos.get(key));
+            },
+            guardarCarrito: async (userId, version, changes) => {
+                const key = String(userId);
+                const cart = carritos.get(key);
+                if (!cart || cart.version !== version) return null;
+                const saved = { ...cart, ...structuredClone(changes), version: version + 1 };
+                carritos.set(key, saved);
+                return structuredClone(saved);
+            },
             listarProductos: async () => productos,
             buscarProducto: async id => productos.find(producto => producto._id === id),
             crearProducto: async producto => {
@@ -64,7 +80,36 @@ async function iniciarServidor() {
                 return indice === -1 ? null : categorias.splice(indice, 1)[0];
             },
             categoriaEnUso: async id =>
-                productos.some(producto => producto.categoryIds.some(categoriaId => String(categoriaId) === id))
+                productos.some(producto => producto.categoryIds.some(categoriaId => String(categoriaId) === id)),
+            buscarUsuarioPorEmail: async email => usuarios.find(usuario => usuario.email === email),
+            buscarUsuarioPorId: async id => usuarios.find(usuario => String(usuario._id) === String(id)),
+            crearUsuario: async usuario => {
+                const documento = usuario.toObject();
+                usuarios.push(documento);
+                return documento;
+            },
+            actualizarContrasena: async (id, hashedPassword) => {
+                const usuario = usuarios.find(item => String(item._id) === String(id));
+                if (!usuario) return null;
+                usuario.hashed_password = hashedPassword;
+                return usuario;
+            },
+            crearSesion: async sesion => {
+                sesiones.push(sesion);
+                return sesion;
+            },
+            buscarSesion: async tokenHash => sesiones.find(sesion => sesion.tokenHash === tokenHash),
+            eliminarSesion: async tokenHash => {
+                const indice = sesiones.findIndex(sesion => sesion.tokenHash === tokenHash);
+                if (indice !== -1) sesiones.splice(indice, 1);
+            },
+            eliminarOtrasSesiones: async (userId, tokenHash) => {
+                for (let indice = sesiones.length - 1; indice >= 0; indice -= 1) {
+                    if (String(sesiones[indice].userId) === String(userId) && sesiones[indice].tokenHash !== tokenHash) {
+                        sesiones.splice(indice, 1);
+                    }
+                }
+            }
         });
         console.log("Modo demo: productos del JSON, sin conexión ni escritura en MongoDB.");
     } else {
