@@ -29,7 +29,7 @@ function Reveal({ children, className = "" }) {
     return <div ref={element} className={`section__inner reveal${visible ? " is-visible" : ""} ${className}`}>{children}</div>;
 }
 
-export default function HomePage() {
+export default function HomePage({ onOpenAssistant }) {
     const [index, setIndex] = useState(0);
     const [message, setMessage] = useState("");
     return <main className="react-home">
@@ -84,8 +84,7 @@ export default function HomePage() {
                 <div className="contact-form__actions">
                     <button className="btn-action btn-action--primary" type="submit">Enviar mensaje</button>
                     <p className="contact-form__or"> O </p>
-                    <a className="btn-action btn-action--assistant" href="https://instagram.com/horus.uy" target="_blank" rel="noreferrer">Hablar con el asistente IA
-                    </a>
+                    <button className="btn-action btn-action--assistant" id="assistant-trigger" type="button" onClick={onOpenAssistant}>Contactar al asistente IA</button>
                 </div>
                 <p role="status">{message}</p>
             </fieldset></form>

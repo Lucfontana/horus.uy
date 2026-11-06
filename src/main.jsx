@@ -7,6 +7,7 @@ import "../frontend/styles/producto.css";
 import "../frontend/styles/checkout.css";
 import "../frontend/styles/panel_admin.css";
 import "./migration.css";
+import "./assistant-chat.css";
 
 createRoot(document.getElementById("root")).render(
     <StrictMode><Router /></StrictMode>

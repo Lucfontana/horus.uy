@@ -8,6 +8,7 @@ import CheckoutPage from "./CheckoutPage.jsx";
 import AdminPage from "./AdminPage.jsx";
 import AccountPage from "./AccountPage.jsx";
 import Cart from "./Cart.jsx";
+import AssistantChat from "./AssistantChat.jsx";
 import { useCart } from "./useCart.js";
 import { obtenerProductos } from "./services/products.js";
 import { solicitar } from "./services/api.js";
@@ -17,6 +18,7 @@ const currency = new Intl.NumberFormat("es-UY", { style: "currency", currency: "
 function Site() {
     const location = useLocation();
     const [cartOpen, setCartOpen] = useState(false);
+    const [assistantOpen, setAssistantOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [message, setMessage] = useState("");
     const [auth, setAuth] = useState({ status: "loading", user: null });
@@ -182,8 +184,8 @@ function Site() {
         <p role="status" className="account-toast">{accountMessage}</p>
         {cart.message && <div className="migration-main" role="alert"><p>{cart.message}</p><button type="button" className="admin-button" onClick={cart.synchronize}>Reintentar sincronización del carrito</button></div>}
         <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/inicio" element={<HomePage />} />
+            <Route path="/" element={<HomePage onOpenAssistant={() => setAssistantOpen(true)} />} />
+            <Route path="/inicio" element={<HomePage onOpenAssistant={() => setAssistantOpen(true)} />} />
             <Route path="/catalogo" element={<Catalog />} />
             <Route path="/producto" element={<ProductPage add={cart.add} />} />
             <Route path="/carrito" element={<CheckoutPage entries={entries} update={update} status={status} />} />
@@ -205,6 +207,7 @@ function Site() {
             <div className="react-cart-content">{status === "ready" ? <Cart entries={entries} update={update} /> : <p role="status">{status === "error" ? "No se pudieron actualizar los productos. Recargá para reintentar." : "Cargando carrito..."}</p>}</div>
             <p role="status">{message}</p><div className="react-cart-footer"><p>Subtotal <strong>{status === "ready" ? currency.format(total) : "..."}</strong></p><Link className="btn-action btn-action--primary" to="/checkout" onClick={closeNavigation}>Finalizar compra</Link></div>
         </dialog>
+        <AssistantChat open={assistantOpen} visible={["/", "/inicio"].includes(location.pathname)} onClose={() => setAssistantOpen(false)} />
     </>;
 }
 

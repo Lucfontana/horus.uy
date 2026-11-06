@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { User } from "./models/user.js";
 import { Session } from "./models/session.js";
@@ -19,6 +20,52 @@ const browserScripts = new Set([
     "catalogo.js", "checkout.js", "filter_products.js", "load_products.js",
     "navbar.js", "panel_admin-logica.js", "theme.js"
 ]);
+const chatWindowMs = 60 * 60 * 1000;
+const chatRateLimits = new Map();
+const chatKnowledgeUrl = new URL("../conocimiento.txt", import.meta.url);
+
+function limitarSolicitudesChat(ip, ahora = Date.now()) {
+    let limite = chatRateLimits.get(ip);
+    if (!limite || ahora - limite.inicio >= chatWindowMs) {
+        limite = { inicio: ahora, cantidad: 0 };
+        chatRateLimits.set(ip, limite);
+    }
+    if (limite.cantidad >= 15) return Math.ceil((chatWindowMs - (ahora - limite.inicio)) / 1000);
+    limite.cantidad += 1;
+    return 0;
+}
+
+async function consultarGroq({ clave, modelo, mensajes }) {
+    const respuesta = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${clave}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            model: modelo,
+            messages: mensajes,
+            temperature: 0.2,
+            max_tokens: 300,
+            response_format: { type: "json_object" }
+        }),
+        signal: AbortSignal.timeout(20000)
+    });
+    if (!respuesta.ok) throw new Error("Groq request failed");
+    const datos = await respuesta.json();
+    const contenido = datos.choices?.[0]?.message?.content;
+    if (typeof contenido !== "string") throw new Error("Groq response was invalid");
+    const resultado = JSON.parse(contenido);
+    if (typeof resultado.answer !== "string" || !resultado.answer.trim() ||
+        typeof resultado.needsHuman !== "boolean" || typeof resultado.needsCatalog !== "boolean") {
+        throw new Error("Groq response was invalid");
+    }
+    return {
+        answer: resultado.answer.slice(0, 1200),
+        needsHuman: resultado.needsHuman,
+        needsCatalog: resultado.needsCatalog
+    };
+}
 
 function idDeCategoria(categoria) {
     return String(categoria && typeof categoria === "object" ? categoria._id : categoria);
@@ -162,6 +209,54 @@ export function createApp({
     app.use("/api/cart", autenticar, crearRutasCarrito({
         buscarProducto, leerCarritoUsuario: leerCarrito, guardarCarritoUsuario: guardarCarrito
     }));
+
+    app.post("/api/chat", async (request, response) => {
+        const message = request.body?.message;
+        const history = request.body?.history ?? [];
+        if (typeof message !== "string" || !message.trim() || message.length > 400 ||
+            !Array.isArray(history) || history.length > 10 || history.some(item =>
+                !item || !["user", "assistant"].includes(item.role) ||
+                typeof item.content !== "string" || item.content.length > (item.role === "user" ? 400 : 1200)
+            )) {
+            return response.status(400).json({ error: "Escribí un mensaje de hasta 400 caracteres." });
+        }
+
+        const segundosRestantes = limitarSolicitudesChat(request.ip || request.socket.remoteAddress || "unknown");
+        if (segundosRestantes > 0) {
+            response.set("Retry-After", String(segundosRestantes));
+            return response.status(429).json({ error: "Alcanzó el límite de 15 mensajes por hora. Intente más tarde." });
+        }
+
+        const clave = process.env.GROQ_API;
+        if (!clave) return response.status(503).json({ error: "El asistente no está disponible por el momento." });
+
+        try {
+            const conocimiento = await readFile(chatKnowledgeUrl, "utf8");
+            const instrucciones = [
+                "Sos el asistente oficial de Horus Uruguay, una tienda de ropa.",
+                "Respondé en el idioma del último mensaje del cliente. Usá un tono formal y breve.",
+                "Respondé solo con información respaldada por el conocimiento proporcionado. No inventes datos.",
+                "No informes ni confirmes stock, disponibilidad, colores o talles. Si preguntan por stock, indicá que visiten el catálogo y usen sus filtros; marcá needsCatalog como true y needsHuman como false.",
+                "Si la respuesta no está en el conocimiento, reconocelo, marcá needsHuman como true y needsCatalog como false.",
+                "Devolvé únicamente un objeto JSON con las propiedades answer (texto), needsHuman (booleano) y needsCatalog (booleano).",
+                'Ejemplo de formato: {"answer":"Puedo ayudarle con información de Horus.","needsHuman":false,"needsCatalog":false}',
+                `Conocimiento de la tienda:\n${conocimiento}`
+            ].join("\n\n");
+            const mensajes = [
+                { role: "system", content: instrucciones },
+                ...history.map(({ role, content }) => ({ role, content })),
+                { role: "user", content: message.trim() }
+            ];
+            const resultado = await consultarGroq({
+                clave,
+                modelo: process.env.GROQ_MODEL || "openai/gpt-oss-20b",
+                mensajes
+            });
+            return response.set("Cache-Control", "no-store").json(resultado);
+        } catch {
+            return response.status(503).json({ error: "No se pudo obtener una respuesta del asistente." });
+        }
+    });
 
     app.post("/api/register", async (request, response) => {
         const { nombre, apellido, email, password } = request.body || {};
