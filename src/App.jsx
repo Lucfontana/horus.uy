@@ -168,7 +168,6 @@ export default function App() {
                             <option value="newest">Lo más nuevo</option>
                             <option value="price-asc">Precio: menor a mayor</option>
                             <option value="price-desc">Precio: mayor a menor</option>
-                            <option value="best-selling">Más vendidos</option>
                         </select>
                     </div>
                 </div>

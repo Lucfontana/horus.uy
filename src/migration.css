@@ -81,7 +81,7 @@
 .account-heading h1 { font-size: 2rem; }
 .account-form { display: grid; gap: 1rem; }
 .account-field { display: grid; gap: .4rem; color: var(--text-muted); font-size: .9rem; }
-.account-field > input, .account-password input { width: 100%; min-width: 0; padding: .75rem; border: 1px solid var(--border); border-radius: 6px; background: var(--input-bg); color: var(--text); font: inherit; }
+.account-field > input, .account-field > textarea, .account-password input { width: 100%; min-width: 0; padding: .75rem; border: 1px solid var(--border); border-radius: 6px; background: var(--input-bg); color: var(--text); font: inherit; }
 .account-password { display: flex; align-items: center; gap: .5rem; }
 .account-password .icon-btn { flex: 0 0 40px; }
 .account-form > .admin-button { justify-self: start; }
@@ -92,6 +92,26 @@
 .account-details dt { color: var(--text-muted); }
 .account-details dd { margin: 0; overflow-wrap: anywhere; }
 .account-card h2 { margin-bottom: 1rem; font-size: 1.5rem; }
+.account-orders { margin: 2rem 0; }
+.account-order { display: grid; gap: .75rem; margin: 1rem 0; padding: 1rem; border: 1px solid var(--border); background: var(--bg-alt); }
+.account-order > header { display: flex; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.account-order > header h3 { font-size: 1rem; overflow-wrap: anywhere; }
+.account-order > header p, .account-order > header strong { color: var(--text-muted); font-size: .82rem; }
+.account-order .checkout-products { padding: .5rem; }
+.account-order .checkout-item { grid-template-columns: minmax(0, 1fr) 90px max-content; }
+.account-order .checkout-order__quantity { text-align: left; }
+.account-order__totals { display: grid; gap: .35rem; }
+.account-order__totals div { display: flex; justify-content: space-between; gap: .75rem; color: var(--text-muted); font-size: .85rem; }
+.account-order__totals dd { margin: 0; text-align: right; }
+.account-order__totals div:last-child { padding-top: .5rem; border-top: 1px solid var(--border-soft); color: var(--text); font-weight: 700; }
+.admin-order-expand { padding: .55rem .75rem; white-space: nowrap; }
+.admin-order-expand:hover { border-color: var(--gold-dim); background: var(--gold-dim); color: var(--text); }
+.admin-order-products-row > td { padding: 0 !important; border: 0 !important; }
+.admin-order-products { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .3s var(--ease), opacity .2s ease; }
+.admin-order-products.is-open { grid-template-rows: 1fr; opacity: 1; }
+.admin-order-products__inner { min-height: 0; overflow: hidden; padding: 0 .75rem; transition: padding .2s ease; }
+.admin-order-products.is-open .admin-order-products__inner { padding-block: .75rem; }
+.admin-order-products .checkout-products { padding: .5rem; border-color: var(--border-soft); background: var(--bg-card); }
 .account-message { min-height: 1.5rem; margin-top: 1rem; color: var(--text-muted); }
 .account-message:empty { display: none; }
 button:disabled { cursor: not-allowed; opacity: .55; }

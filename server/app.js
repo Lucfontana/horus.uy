@@ -6,8 +6,12 @@ import { User } from "./models/user.js";
 import { Session } from "./models/session.js";
 import { Category } from "./models/category.js";
 import { Product } from "./models/product.js";
+import { Coupon } from "./models/coupon.js";
+import { Order } from "./models/order.js";
 import { leerCarritoUsuario, guardarCarritoUsuario } from "./models/cart.js";
 import { crearRutasCarrito } from "./cart.js";
+import { crearRutasCupones } from "./coupons.js";
+import { crearRutasOrdenes } from "./orders.js";
 import {
     borrarCookieSesion, crearTokenSesion, hashPassword, hashToken, guardarCookieSesion,
     leerTokenSesion, verificarContrasena, venceSesion
@@ -148,6 +152,15 @@ export function createApp({
     categoriaEnUso = id => Product.exists({ categoryIds: id }),
     buscarUsuarioPorEmail = email => User.findOne({ email }).select("+hashed_password").lean().exec(),
     buscarUsuarioPorId = id => User.findById(id).select("+hashed_password").lean().exec(),
+    listarCupones = () => Coupon.find().sort({ code: 1 }).lean().exec(),
+    buscarCuponPorCodigo = code => Coupon.findOne({ code }).lean().exec(),
+    crearCupon = coupon => new Coupon(coupon).save(),
+    eliminarCupon = id => Coupon.findByIdAndDelete(id).lean().exec(),
+    listarOrdenes = filter => Order.find(filter).sort({ createdAt: -1 }).lean().exec(),
+    buscarOrden = id => Order.findById(id).lean().exec(),
+    crearOrden = order => new Order(order).save(),
+    actualizarEstadoOrden = (id, status) =>
+        Order.findByIdAndUpdate(id, { status }, { returnDocument: "after", runValidators: true }).lean().exec(),
     crearUsuario = usuario => usuario.save(),
     actualizarContrasena = async (id, hashedPassword) => {
         const usuario = await User.findById(id).select("+hashed_password").exec();
@@ -208,6 +221,14 @@ export function createApp({
 
     app.use("/api/cart", autenticar, crearRutasCarrito({
         buscarProducto, leerCarritoUsuario: leerCarrito, guardarCarritoUsuario: guardarCarrito
+    }));
+    app.use("/api/coupons", crearRutasCupones({
+        autenticar, soloAdmin, listarCupones, buscarCuponPorCodigo, crearCupon, eliminarCupon
+    }));
+    app.use("/api/orders", crearRutasOrdenes({
+        autenticar, soloAdmin, listarOrdenes, buscarOrden, crearOrden, actualizarEstadoOrden,
+        buscarUsuarioPorId, buscarProducto, buscarCuponPorCodigo,
+        leerCarritoUsuario: leerCarrito, guardarCarritoUsuario: guardarCarrito
     }));
 
     app.post("/api/chat", async (request, response) => {

@@ -20,6 +20,8 @@ async function iniciarServidor() {
         const usuarios = [];
         const sesiones = [];
         const carritos = new Map();
+        const cupones = [];
+        const ordenes = [];
         const productos = iniciales.map(({ categories: nombres, ...producto }) =>
             new Product({
                 ...producto,
@@ -39,6 +41,31 @@ async function iniciarServidor() {
                 const saved = { ...cart, ...structuredClone(changes), version: version + 1 };
                 carritos.set(key, saved);
                 return structuredClone(saved);
+            },
+            listarCupones: async () => cupones,
+            buscarCuponPorCodigo: async code => cupones.find(coupon => coupon.code === code),
+            crearCupon: async coupon => {
+                const created = { ...coupon, _id: new mongoose.Types.ObjectId() };
+                cupones.push(created);
+                return created;
+            },
+            eliminarCupon: async id => {
+                const index = cupones.findIndex(coupon => String(coupon._id) === id);
+                return index === -1 ? null : cupones.splice(index, 1)[0];
+            },
+            listarOrdenes: async filter => ordenes.filter(order =>
+                !filter.userId || String(order.userId) === String(filter.userId)),
+            buscarOrden: async id => ordenes.find(order => String(order._id) === id),
+            crearOrden: async order => {
+                const created = { ...structuredClone(order), _id: new mongoose.Types.ObjectId(), createdAt: new Date() };
+                ordenes.push(created);
+                return created;
+            },
+            actualizarEstadoOrden: async (id, status) => {
+                const order = ordenes.find(item => String(item._id) === id);
+                if (!order) return null;
+                order.status = status;
+                return order;
             },
             listarProductos: async () => productos,
             buscarProducto: async id => productos.find(producto => producto._id === id),

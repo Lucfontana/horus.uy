@@ -108,9 +108,13 @@ En `.env`, configurá:
 ```env
 MONGODB_URI=mongodb://127.0.0.1:27017/horus
 PORT=3000
+WHATSAPP_BUSINESS_NUMBER=59812345678
 ```
 
 La URI local requiere un MongoDB en ejecución en ese host y puerto.
+Reemplazá el ejemplo de `WHATSAPP_BUSINESS_NUMBER` por el número real del negocio
+en formato internacional, solo dígitos y sin el signo `+`; es necesario para
+finalizar órdenes y generar el enlace de WhatsApp.
 Para Atlas, reemplazala por la URI de **Connect > Drivers**, con el usuario de
 base de datos, contraseña y nombre de base. Autorizá también la IP de salida
 del servidor en Atlas. No compartas la URI ni la incluyas en código del navegador.
@@ -252,5 +256,6 @@ siguiente usuario del dispositivo.
 	`obtenerProductos()`, el filtrado local y la presentación del catálogo.
 
 El tema mantiene su persistencia local. El carrito de invitado sigue usando
-`localStorage`; los carritos de cuentas se guardan en MongoDB. El cupón y la
-compra siguen siendo placeholders: no se guardan pedidos ni se realizan pagos.
+`localStorage`; los carritos de cuentas se guardan en MongoDB. Los cupones y
+órdenes se almacenan en MongoDB. Al finalizar una orden se prepara un mensaje de
+WhatsApp; no se procesa ningún pago en línea.

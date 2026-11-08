@@ -1,15 +1,25 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, List, Tags, Save } from "lucide-react";
 import { solicitar } from "./services/api.js";
+import OrderItems from "./OrderItems.jsx";
 
 const sizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+const orderStatuses = ["Orden recibida", "Procesando", "Enviado", "Finalizado", "Descartado"];
 const currency = new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" });
 
 async function loadData(signal) {
-    const [products, categories] = await Promise.all([
-        solicitar("/api/products", { signal }), solicitar("/api/categories", { signal })
+    const [products, categories, coupons, orders] = await Promise.all([
+        solicitar("/api/products", { signal }),
+        solicitar("/api/categories", { signal }),
+        solicitar("/api/coupons", { signal }),
+        solicitar("/api/orders", { signal })
     ]);
-    return { products: Object.entries(products.items).map(([id, product]) => ({ ...product, id })), categories };
+    return {
+        products: Object.entries(products.items).map(([id, product]) => ({ ...product, id })),
+        categories,
+        coupons,
+        orders
+    };
 }
 
 function ProductForm({ product, categories, busy, onSave }) {
@@ -35,13 +45,14 @@ function ProductForm({ product, categories, busy, onSave }) {
 }
 
 export default function AdminPage() {
-    const [data, setData] = useState({ products: [], categories: [] });
+    const [data, setData] = useState({ products: [], categories: [], coupons: [], orders: [] });
     const [status, setStatus] = useState("loading");
     const [view, setView] = useState("products");
     const [selected, setSelected] = useState("");
     const [message, setMessage] = useState("");
     const [busy, setBusy] = useState(false);
     const [revision, setRevision] = useState(0);
+    const [expandedOrders, setExpandedOrders] = useState({});
     useEffect(() => {
         const controller = new AbortController();
         loadData(controller.signal).then(result => { setData(result); setStatus("ready"); }).catch(error => {
@@ -70,10 +81,10 @@ export default function AdminPage() {
     }
 
     const product = data.products.find(item => item.id === selected);
-    const views = [["products", "Ver productos", <List size={18} aria-hidden="true" />], ["add", "Agregar producto", <Plus size={18} aria-hidden="true" />], ["edit", "Editar producto", <Pencil size={18} aria-hidden="true" />], ["delete", "Eliminar producto", <Trash2 size={18} aria-hidden="true" />], ["categories", "Gestionar categorías", <Tags size={18} aria-hidden="true" />]];
+    const views = [["products", "Ver productos", <List size={18} aria-hidden="true" />], ["add", "Agregar producto", <Plus size={18} aria-hidden="true" />], ["edit", "Editar producto", <Pencil size={18} aria-hidden="true" />], ["delete", "Eliminar producto", <Trash2 size={18} aria-hidden="true" />], ["categories", "Gestionar categorías", <Tags size={18} aria-hidden="true" />], ["coupons", "Gestionar cupones", <Tags size={18} aria-hidden="true" />], ["orders", "Ver órdenes", <List size={18} aria-hidden="true" />]];
     return <div className="admin-layout react-admin">
         <aside className="admin-sidebar"><p className="eyebrow">Horus Uruguay</p><nav className="admin-nav" aria-label="Administración">{views.map(([name, label, icon]) => <button type="button" key={name} aria-current={view === name ? "page" : undefined} disabled={busy} onClick={() => { setView(name); setMessage(""); }}>{icon}{label}</button>)}</nav></aside>
-        <main className="admin-main"><div className="admin-content"><header className="admin-heading"><h1>Administrar productos</h1><p>{data.products.length} productos</p></header><p role={status === "error" ? "alert" : "status"} className="admin-message">{status === "loading" ? "Cargando..." : message}</p>
+        <main className="admin-main"><div className="admin-content"><header className="admin-heading"><h1>Administración</h1><p>{data.products.length} productos · {data.coupons.length} cupones · {data.orders.length} órdenes</p></header><p role={status === "error" ? "alert" : "status"} className="admin-message">{status === "loading" ? "Cargando..." : message}</p>
             {status === "error" && <button type="button" className="admin-button" onClick={() => window.location.reload()}>Reintentar</button>}
             {status === "ready" && <section className="admin-panel"><h2>{views.find(([name]) => name === view)[1]}</h2>
                 {view === "products" && <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Categorías</th><th>Variantes</th></tr></thead><tbody>{data.products.map(item => <tr key={item.id}><td>{item.id}</td><td>{item.name}</td><td>{currency.format(item.price)}</td><td>{item.categories.join(", ")}</td><td>{item.colors.join(", ")} / {item.size.join(", ")}</td></tr>)}</tbody></table>{!data.products.length && <p>No hay productos.</p>}</div>}
@@ -88,6 +99,52 @@ export default function AdminPage() {
                         <button type="button" className="admin-button admin-button--danger" title="Eliminar categoría" aria-label={`Eliminar ${category.name}`} disabled={busy} onClick={() => { if (window.confirm(`¿Eliminar la categoría "${category.name}"?`)) mutate(`/api/categories/${encodeURIComponent(category.id)}`, "DELETE"); }}><Trash2 size={16} /></button>
                     </div></td></tr>)}</tbody></table>{!data.categories.length && <p>No hay categorías.</p>}</div>
                 </>}
+                {view === "coupons" && <>
+                    <form key={`coupon:${revision}`} className="admin-form" onSubmit={event => {
+                        event.preventDefault();
+                        const form = event.currentTarget;
+                        const fields = new FormData(form);
+                        mutate("/api/coupons", "POST", {
+                            code: fields.get("code").trim(),
+                            discountPercent: Number(fields.get("discountPercent"))
+                        });
+                    }}>
+                        <label className="admin-field">Código<input name="code" required maxLength="80" autoComplete="off" /></label>
+                        <label className="admin-field">Descuento (%)<input name="discountPercent" type="number" min="1" max="99" step="1" required /></label>
+                        <div className="admin-form-actions"><button className="admin-button" disabled={busy}><Plus size={16} aria-hidden="true" />Crear cupón</button></div>
+                    </form>
+                    <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Código</th><th>Descuento</th><th>Acciones</th></tr></thead><tbody>{data.coupons.map(coupon => <tr key={coupon.id}><td>{coupon.code}</td><td>{coupon.discountPercent}%</td><td><button type="button" className="admin-button admin-button--danger" disabled={busy} onClick={() => {
+                        if (window.confirm(`¿Eliminar el cupón ${coupon.code}?`)) mutate(`/api/coupons/${encodeURIComponent(coupon.id)}`, "DELETE");
+                    }}><Trash2 size={16} aria-hidden="true" />Eliminar</button></td></tr>)}</tbody></table>{!data.coupons.length && <p>No hay cupones de descuento.</p>}</div>
+                </>}
+                {view === "orders" && <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Orden</th><th>Cliente</th><th>Fecha</th><th>Dirección de envío</th><th>Número de contacto</th><th>Productos</th><th>Total</th><th>Estado</th></tr></thead><tbody>{data.orders.map(order => {
+                    const expanded = Boolean(expandedOrders[order.id]);
+                    const productsId = `order-products-${order.id}`;
+                    return <Fragment key={order.id}>
+                        <tr>
+                            <td>{order.id}</td>
+                            <td>{order.user ? `${order.user.nombre} ${order.user.apellido} · ${order.user.email}` : "Usuario"}</td>
+                            <td>{new Date(order.createdAt).toLocaleDateString("es-UY")}</td>
+                            <td>{order.address}</td>
+                            <td>{order.phone}</td>
+                            <td><button type="button" className="admin-button admin-button--secondary admin-order-expand" aria-expanded={expanded} aria-controls={productsId} onClick={() => setExpandedOrders(current => ({ ...current, [order.id]: !current[order.id] }))}>{expanded ? "Contraer" : "Expander"}</button></td>
+                            <td>{currency.format(order.total)}</td>
+                            <td><label className="admin-field"><span className="visually-hidden">Estado de la orden {order.id}</span><select value={order.status} disabled={busy} onChange={event => mutate(`/api/orders/${encodeURIComponent(order.id)}/status`, "PATCH", { status: event.target.value })}>{orderStatuses.map(orderStatus => <option key={orderStatus} value={orderStatus}>{orderStatus}</option>)}</select></label></td>
+                        </tr>
+                        <tr className="admin-order-products-row">
+                            <td colSpan={8}>
+                                <div id={productsId} className={`admin-order-products${expanded ? " is-open" : ""}`} aria-hidden={!expanded}>
+                                    <div className="admin-order-products__inner">
+                                        <section className="checkout-products" aria-label={`Productos de la orden ${order.id}`}>
+                                            <div className="checkout-products__labels" aria-hidden="true"><span>Producto</span><span>Cantidad</span><span>Precio</span><span /></div>
+                                            <OrderItems entries={order.items} />
+                                        </section>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </Fragment>;
+                })}</tbody></table>{!data.orders.length && <p>No hay órdenes.</p>}</div>}
             </section>}
         </div></main>
     </div>;

@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Eye, EyeOff, Save, UserRound } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { solicitar } from "./services/api.js";
+import OrderItems from "./OrderItems.jsx";
+
+const currency = new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" });
 
 function PasswordField({ label, name, autoComplete, minLength }) {
     const [visible, setVisible] = useState(false);
@@ -12,11 +15,31 @@ function PasswordField({ label, name, autoComplete, minLength }) {
 }
 
 export default function AccountPage({ auth, onAuthenticated, initialMode = "login" }) {
+    const location = useLocation();
     const [mode, setMode] = useState(initialMode);
     const [message, setMessage] = useState("");
     const [busy, setBusy] = useState(false);
+    const [ordersState, setOrdersState] = useState({ userId: "", orders: [], status: "loading", message: "" });
+    const [discardingOrder, setDiscardingOrder] = useState("");
+    const userId = auth.user?.id;
+    const orders = ordersState.userId === userId ? ordersState.orders : [];
+    const ordersStatus = ordersState.userId === userId ? ordersState.status : "loading";
+    const ordersMessage = ordersState.userId === userId ? ordersState.message : "";
     const pageClassName = `account-page${auth.user ? "" : " account-page--standalone"}`;
     const backLink = <Link to="/" className="account-back"><ArrowLeft size={18} aria-hidden="true" />Volver</Link>;
+
+    useEffect(() => {
+        if (!userId) return undefined;
+        const controller = new AbortController();
+        solicitar("/api/orders", { signal: controller.signal }).then(result => {
+            setOrdersState({ userId, orders: result, status: "ready", message: "" });
+        }).catch(error => {
+            if (error.name !== "AbortError") {
+                setOrdersState({ userId, orders: [], status: "error", message: error.message });
+            }
+        });
+        return () => controller.abort();
+    }, [userId]);
 
     async function submit(event) {
         event.preventDefault();
@@ -30,7 +53,7 @@ export default function AccountPage({ auth, onAuthenticated, initialMode = "logi
                 method: "POST",
                 body: JSON.stringify(values)
             });
-            onAuthenticated(user);
+            onAuthenticated(user, location.state?.checkout);
             setMessage(mode === "register" ? "Tu cuenta se creó correctamente." : "Iniciaste sesión correctamente.");
         } catch (error) {
             setMessage(error.message);
@@ -59,6 +82,29 @@ export default function AccountPage({ auth, onAuthenticated, initialMode = "logi
         }
     }
 
+    async function discardOrder(order) {
+        const confirmed = window.confirm(
+            "¿Estás seguro de marcar tu orden como descartada? Esto detiene su preparación y envío. Si ya coordinaste por WhatsApp, avisa también al negocio."
+        );
+        if (!confirmed || discardingOrder) return;
+        setDiscardingOrder(order.id);
+        setOrdersState(previous => previous.userId === userId
+            ? { ...previous, message: "" } : previous);
+        try {
+            const updated = await solicitar(`/api/orders/${encodeURIComponent(order.id)}/discard`, { method: "POST" });
+            setOrdersState(previous => previous.userId === userId ? {
+                ...previous,
+                orders: previous.orders.map(item => item.id === updated.id ? updated : item),
+                message: "La orden se marcó como descartada."
+            } : previous);
+        } catch (error) {
+            setOrdersState(previous => previous.userId === userId
+                ? { ...previous, message: error.message } : previous);
+        } finally {
+            setDiscardingOrder("");
+        }
+    }
+
     if (auth.status === "loading") {
         return <main className={pageClassName}><section className="account-card">{backLink}<p role="status">Cargando tu cuenta...</p></section></main>;
     }
@@ -77,6 +123,22 @@ export default function AccountPage({ auth, onAuthenticated, initialMode = "logi
                     <div><dt>Rol</dt><dd>{auth.user.role === "admin" ? "Administrador" : "Usuario"}</dd></div>
                     {auth.user.direccion && <div><dt>Dirección</dt><dd>{auth.user.direccion}</dd></div>}
                 </dl>
+                <section className="account-orders">
+                    <h2>Mis órdenes</h2>
+                    <p role={ordersStatus === "error" || /no se pudo|error/i.test(ordersMessage) ? "alert" : "status"}>{ordersStatus === "loading" ? "Cargando tus órdenes..." : ordersMessage}</p>
+                    {ordersStatus === "error" && <button type="button" className="admin-button" onClick={() => window.location.reload()}>Reintentar</button>}
+                    {ordersStatus === "ready" && !orders.length && <p>Todavía no realizaste órdenes.</p>}
+                    {orders.map(order => <article className="account-order" key={order.id}>
+                        <header><div><h3>Orden {order.id}</h3><p>{new Date(order.createdAt).toLocaleDateString("es-UY")}</p></div><strong>{order.status}</strong></header>
+                        <div className="checkout-products"><OrderItems entries={order.items} /></div>
+                        <dl className="account-order__totals">
+                            <div><dt>Subtotal</dt><dd>{currency.format(order.subtotal)}</dd></div>
+                            {order.discountPercent > 0 && <div><dt>Cupón {order.couponCode} ({order.discountPercent}%)</dt><dd>−{currency.format(order.discountAmount)}</dd></div>}
+                            <div><dt>Total</dt><dd>{currency.format(order.total)}</dd></div>
+                        </dl>
+                        {["Orden recibida", "Procesando"].includes(order.status) && <button type="button" className="admin-button admin-button--danger" disabled={discardingOrder === order.id} onClick={() => discardOrder(order)}>{discardingOrder === order.id ? "Descartando..." : "Descartar orden"}</button>}
+                    </article>)}
+                </section>
                 <h2>Cambiar contraseña</h2>
                 <form className="account-form" onSubmit={changePassword}>
                     <PasswordField label="Contraseña actual" name="currentPassword" autoComplete="current-password" />

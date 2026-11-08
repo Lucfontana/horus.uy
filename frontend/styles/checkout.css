@@ -300,6 +300,52 @@
   color: var(--gold-light);
 }
 
+.shipping-layout .checkout-summary {
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.shipping-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.shipping-form textarea,
+.shipping-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text);
+  font: inherit;
+}
+
+.shipping-help {
+  margin-top: -0.65rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.checkout-order__quantity {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+.shipping-confirmation {
+  display: grid;
+  gap: 1rem;
+}
+
+.shipping-whatsapp {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -407,6 +453,12 @@
     grid-column: 2;
     grid-row: 3;
     text-align: right;
+  }
+
+  .checkout-order__quantity {
+    grid-column: 1;
+    grid-row: 3;
+    text-align: left;
   }
 
   .checkout-item__image {
