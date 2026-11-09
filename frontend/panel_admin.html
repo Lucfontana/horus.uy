@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('horus-theme') === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Administración del catálogo de productos de Horus Uruguay">
+  <title>Administrar productos | Horus Uruguay</title>
+  <link rel="stylesheet" href="styles/styles.css">
+  <link rel="stylesheet" href="styles/panel_admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <a class="admin-brand" href="/frontend/index.html" aria-label="Horus Uruguay - Inicio">
+        <img src="src/logo.png" alt="Horus Uruguay">
+        <span class="admin-brand__label">Panel de administrador</span>
+      </a>
+      <div class="site-header__actions">
+        <button type="button" class="icon-btn" id="theme-toggle" aria-pressed="false" aria-label="Cambiar a modo claro">
+          <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"></circle>
+            <line x1="12" y1="2" x2="12" y2="4.5"></line>
+            <line x1="12" y1="19.5" x2="12" y2="22"></line>
+            <line x1="2" y1="12" x2="4.5" y2="12"></line>
+            <line x1="19.5" y1="12" x2="22" y2="12"></line>
+            <line x1="4.9" y1="4.9" x2="6.6" y2="6.6"></line>
+            <line x1="17.4" y1="17.4" x2="19.1" y2="19.1"></line>
+            <line x1="4.9" y1="19.1" x2="6.6" y2="17.4"></line>
+            <line x1="17.4" y1="6.6" x2="19.1" y2="4.9"></line>
+          </svg>
+          <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"></path>
+          </svg>
+        </button>
+      </div>
+      <nav class="admin-nav" aria-label="Administración del catálogo">
+        <button type="button" data-view="products" aria-current="page">Ver productos</button>
+        <button type="button" data-view="add">Agregar producto</button>
+        <button type="button" data-view="edit">Editar producto</button>
+        <button type="button" data-view="delete">Eliminar producto</button>
+        <button type="button" data-view="categories">Gestionar categorías</button>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-content">
+        <header class="admin-heading">
+          <p class="eyebrow">Catálogo</p>
+          <h1>Administrar productos</h1>
+          <p>Gestioná el catálogo de la tienda desde un solo lugar.</p>
+        </header>
+
+        <section class="admin-panel" data-panel="products">
+          <h2>Productos actuales</h2>
+          <p class="admin-description">Listado del catálogo con su identificador, precio y variantes.</p>
+          <p class="admin-count" id="product-count" aria-live="polite">Cargando productos…</p>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>ID</th><th>Producto</th><th>Precio</th><th>Categorías</th><th>Colores / talles</th></tr></thead>
+              <tbody id="products-table"></tbody>
+            </table>
+          </div>
+          <p class="admin-message" id="list-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="admin-panel" data-panel="add" hidden>
+          <h2>Agregar producto</h2>
+          <p class="admin-description">El ID se genera automáticamente al guardar.</p>
+          <form class="admin-form" id="add-form">
+            <label class="admin-field">Nombre
+              <input name="name" required maxlength="160">
+            </label>
+            <label class="admin-field">Precio
+              <input name="price" type="number" min="0" step="0.01" required>
+            </label>
+            <label class="admin-field admin-field--wide">Imagen principal (ruta)
+              <input name="imgSrc" required>
+            </label>
+            <label class="admin-field admin-field--wide">Imagen alternativa (ruta)
+              <input name="imgSrcHover" required>
+            </label>
+            <label class="admin-field admin-field--wide">Texto alternativo de imagen
+              <input name="alt" required maxlength="240">
+            </label>
+            <fieldset class="admin-fieldset admin-field--wide">
+              <legend>Categorías disponibles</legend>
+              <div class="admin-option-list" id="add-category-options"></div>
+            </fieldset>
+            <label class="admin-field">Colores (separados por comas)
+              <input name="colors" placeholder="Negro, Azul">
+            </label>
+            <fieldset class="admin-fieldset">
+              <legend>Talles disponibles</legend>
+              <div class="admin-option-list" id="add-size-options"></div>
+            </fieldset>
+            <label class="admin-field admin-checkbox">
+              <input name="is_new" type="checkbox"> Producto nuevo
+            </label>
+            <div class="admin-form-actions">
+              <button class="admin-button" type="submit">Guardar producto</button>
+              <p class="admin-message" id="add-message" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+
+        <section class="admin-panel" data-panel="edit" hidden>
+          <h2>Editar producto</h2>
+          <p class="admin-description">Elegí un ID para cargar el producto; solo se guardan los campos del formulario.</p>
+          <form class="admin-form" id="edit-form">
+            <label class="admin-field admin-field--wide">Producto por ID
+              <select name="id" id="edit-id" required></select>
+            </label>
+            <label class="admin-field">Nombre
+              <input name="name" required maxlength="160">
+            </label>
+            <label class="admin-field">Precio
+              <input name="price" type="number" min="0" step="0.01" required>
+            </label>
+            <label class="admin-field admin-field--wide">Imagen principal (ruta)
+              <input name="imgSrc" required>
+            </label>
+            <label class="admin-field admin-field--wide">Imagen alternativa (ruta)
+              <input name="imgSrcHover" required>
+            </label>
+            <label class="admin-field admin-field--wide">Texto alternativo de imagen
+              <input name="alt" required maxlength="240">
+            </label>
+            <fieldset class="admin-fieldset admin-field--wide">
+              <legend>Categorías disponibles</legend>
+              <div class="admin-option-list" id="edit-category-options"></div>
+            </fieldset>
+            <label class="admin-field">Colores (separados por comas)
+              <input name="colors">
+            </label>
+            <fieldset class="admin-fieldset">
+              <legend>Talles disponibles</legend>
+              <div class="admin-option-list" id="edit-size-options"></div>
+            </fieldset>
+            <label class="admin-field admin-checkbox">
+              <input name="is_new" type="checkbox"> Producto nuevo
+            </label>
+            <div class="admin-form-actions">
+              <button class="admin-button admin-button--secondary" type="button" id="load-product">Cargar producto</button>
+              <button class="admin-button" type="submit">Guardar cambios</button>
+              <p class="admin-message" id="edit-message" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+
+        <section class="admin-panel" data-panel="delete" hidden>
+          <h2>Eliminar producto</h2>
+          <p class="admin-description">La eliminación es permanente. Revisá el ID antes de confirmar.</p>
+          <form class="admin-form" id="delete-form">
+            <label class="admin-field admin-field--wide">Producto por ID
+              <select name="id" id="delete-id" required></select>
+            </label>
+            <div class="admin-form-actions">
+              <button class="admin-button" type="submit">Eliminar producto</button>
+              <p class="admin-message" id="delete-message" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+        </section>
+
+        <section class="admin-panel" data-panel="categories" hidden>
+          <h2>Gestionar categorías</h2>
+          <p class="admin-description">Las categorías se comparten en el catálogo y solo pueden eliminarse cuando ningún producto las utiliza.</p>
+          <form class="admin-form" id="category-form">
+            <label class="admin-field">Nueva categoría
+              <input name="name" required maxlength="80">
+            </label>
+            <div class="admin-form-actions">
+              <button class="admin-button" type="submit">Agregar categoría</button>
+              <p class="admin-message" id="category-message" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Categoría</th><th>Acciones</th></tr></thead>
+              <tbody id="categories-table"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="../backend/theme.js"></script>
+  <script src="../backend/panel_admin-logica.js"></script>
+</body>
+</html>

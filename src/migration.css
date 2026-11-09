@@ -1,0 +1,132 @@
+.migration-main { max-width: 1440px; margin: auto; padding: calc(2rem + var(--header-h)) 5% 2rem; }
+.migration-main h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+.migration-main button { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .6rem; cursor: pointer; }
+
+.react-header { --text: #ede8dc; --text-muted: #a39d8f; --border: rgba(184, 154, 75, .22); position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: var(--header-h); color: var(--text); background: rgba(9, 9, 11, 0.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.react-header__inner { width: 100%; max-width: 1200px; height: 100%; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.react-header .brand img { width: auto; height: 40px; object-fit: contain; }
+.react-nav { display: flex; gap: 1.5rem; align-items: center; }
+.react-nav a { font-size: .9rem; }
+.react-nav a[aria-current="page"] { color: var(--gold-light); text-decoration: underline; text-underline-offset: .5rem; }
+.react-header .icon-btn { position: relative; flex-shrink: 0; }
+.account-menu { position: relative; }
+.account-menu__dropdown { display: none; position: absolute; top: calc(100% - 1px); right: 0; z-index: 110; min-width: 210px; padding: .5rem; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-alt); box-shadow: 0 12px 28px rgb(0 0 0 / .25); }
+.account-menu:hover .account-menu__dropdown, .account-menu:focus-within .account-menu__dropdown { display: grid; }
+.account-menu__dropdown a, .account-menu__dropdown button { display: flex; align-items: center; gap: .55rem; width: 100%; padding: .7rem .75rem; border: 0; border-radius: 4px; background: transparent; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.account-menu__dropdown a:hover, .account-menu__dropdown button:hover { background: var(--bg-card); color: var(--gold-light); }
+:root[data-theme="light"] .account-menu__dropdown { --text: #211d15; }
+:root[data-theme="light"] .account-menu__dropdown a:hover, :root[data-theme="light"] .account-menu__dropdown button:hover { color: var(--heading); }
+.react-cart-count { position: absolute; top: -2px; right: -2px; font-size: .65rem; min-width: 17px; height: 17px; line-height: 17px; border-radius: 50%; background: var(--gold); color: var(--bg); }
+.react-header .react-menu-toggle { display: none; }
+.react-home { padding-top: var(--header-h); }
+.react-home { min-height: min(720px, 78svh); }
+.react-home .hero__content h1 { font-size: 4rem; line-height: 1.05; margin-bottom: 1.5rem; overflow-wrap: anywhere; }
+.react-home .ubicacion__mapa iframe { width: 100%; height: 100%; min-height: 320px; border: 0; }
+.react-review { min-height: 220px; }
+.react-review .review-card { animation: react-reveal .35s ease-out; }
+.react-review-dots { display: flex; align-items: center; gap: 10px; }
+.react-review-dots .dot { width: 10px; height: 10px; min-width: 10px; border-radius: 50%; border: 1px solid var(--gold); padding: 0; background: transparent; cursor: pointer; }
+.react-review-dots .dot.active { background: var(--gold); }
+.react-home .review-nav-btn { display: flex; align-items: center; justify-content: center; }
+.react-home .review-nav-btn::before { content: none; }
+.react-home .review-viewport { display: grid; width: 100%; }
+.react-home .review-viewport .review-card { grid-area: 1 / 1; height: auto; min-width: 0; }
+.react-home .review-viewport .review-card[aria-hidden="true"] { visibility: hidden; pointer-events: none; }
+.react-options { border: 0; padding: 0; min-width: 0; }
+.react-options legend { margin-bottom: 1rem; font-size: .9rem; }
+.react-options .swatches, .react-options .size-chips { display: flex; flex-wrap: wrap; gap: .75rem; }
+.react-swatch, .react-size { position: relative; display: inline-flex; cursor: pointer; }
+.react-swatch input, .react-size input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+.react-swatch span { display: block; width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 50%; background: var(--swatch-color); }
+.react-size span { display: grid; place-items: center; min-width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 4px; }
+.react-options input:checked + span { outline: 2px solid var(--heading); outline-offset: 3px; }
+.react-options input:focus-visible + span { outline: 2px solid var(--gold); outline-offset: 4px; }
+.react-options input:disabled + span { opacity: .4; text-decoration: line-through; cursor: not-allowed; }
+.product-buy { display: inline-flex; gap: .75rem; align-items: center; justify-content: center; }
+.product-shell { margin: auto; }
+.react-admin .admin-sidebar { position: fixed; top: var(--header-h); bottom: auto; height: calc(100svh - var(--header-h)); }
+.react-admin .admin-main { padding-top: calc(3rem + var(--header-h)); }
+.react-admin .admin-nav button, .react-admin .admin-button { display: inline-flex; align-items: center; gap: .6rem; }
+.react-admin .admin-panel { border: 0; border-radius: 0; background: transparent; padding: 0; }
+.react-admin .admin-panel h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+.react-admin .admin-heading h1 { font-size: 2rem; }
+.react-admin .admin-table td { overflow-wrap: anywhere; max-width: 260px; }
+.react-admin-actions { display: flex; gap: .5rem; }
+.react-admin .admin-form { margin: 1rem 0 2rem; }
+.react-cart-drawer { position: fixed; inset: 0 0 0 auto; margin: 0; width: min(600px, 100%); max-width: 100%; height: 100svh; max-height: 100svh; padding: 1.25rem; color: var(--text); background: var(--bg); border: 0; border-left: 1px solid var(--border); transform: translateX(100%); transition: transform 0.4s var(--ease); }
+.react-cart-drawer[open] { display: flex; flex-direction: column; gap: 1rem; }
+.react-cart-drawer.is-open { transform: translateX(0); }
+.react-cart-drawer::backdrop { background: rgb(0 0 0 / 0); transition: background 0.35s var(--ease); }
+.react-cart-drawer.is-open::backdrop { background: rgb(0 0 0 / .6); }
+.react-cart-heading { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.react-cart-heading h2 { font-size: 1.75rem; }
+.react-cart-content { flex: 1; min-height: 0; overflow-y: auto; }
+.react-cart-footer { padding-top: 1rem; border-top: 1px solid var(--border); }
+.react-cart-footer p { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.react-cart-footer a { display: block; text-align: center; }
+.react-cart-drawer .checkout-item { grid-template-columns: minmax(0, 1fr) auto; gap: .75rem; }
+.react-cart-drawer .checkout-item__product { grid-column: 1 / -1; }
+.react-cart-drawer .checkout-item__remove { grid-column: 2; grid-row: 2; }
+.react-cart-drawer .checkout-item__price { grid-column: 1 / -1; text-align: left; }
+.react-storage-message:empty { display: none; }
+.account-toast:empty { display: none; }
+.account-toast { position: fixed; top: var(--header-h); right: 1rem; z-index: 110; padding: .5rem .75rem; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-alt); color: var(--text); }
+.account-page { min-height: calc(100svh - var(--header-h)); justify-content: flex-start; padding: calc(var(--header-h) + 2.5rem) 1rem 3rem; }
+.account-page--standalone { min-height: 100svh; justify-content: center; padding: 2rem 1rem; }
+.account-back { display: inline-flex; align-items: center; gap: .5rem; margin-bottom: 1.5rem; padding: .5rem .75rem; border: 1px solid var(--border); border-radius: 6px; color: var(--text); }
+.account-back:hover { background: var(--bg-alt); color: var(--heading); }
+.account-card { width: min(100%, 520px); margin: 0 auto; padding: clamp(1.25rem, 4vw, 2rem); border: 1px solid var(--border); border-radius: 8px; background: var(--bg-card); }
+.account-heading { display: flex; align-items: center; gap: .85rem; margin-bottom: 1.5rem; color: var(--gold-light); }
+.account-heading .eyebrow { margin-bottom: .15rem; }
+.account-heading h1 { font-size: 2rem; }
+.account-form { display: grid; gap: 1rem; }
+.account-field { display: grid; gap: .4rem; color: var(--text-muted); font-size: .9rem; }
+.account-field > input, .account-field > textarea, .account-password input { width: 100%; min-width: 0; padding: .75rem; border: 1px solid var(--border); border-radius: 6px; background: var(--input-bg); color: var(--text); font: inherit; }
+.account-password { display: flex; align-items: center; gap: .5rem; }
+.account-password .icon-btn { flex: 0 0 40px; }
+.account-form > .admin-button { justify-self: start; }
+.account-switch { margin-top: 1.25rem; color: var(--text-muted); }
+.account-link { padding: 0; border: 0; background: none; color: var(--gold-light); font: inherit; text-decoration: underline; cursor: pointer; }
+.account-details { display: grid; gap: .75rem; margin-bottom: 1.75rem; }
+.account-details div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: .75rem; }
+.account-details dt { color: var(--text-muted); }
+.account-details dd { margin: 0; overflow-wrap: anywhere; }
+.account-card h2 { margin-bottom: 1rem; font-size: 1.5rem; }
+.account-orders { margin: 2rem 0; }
+.account-order { display: grid; gap: .75rem; margin: 1rem 0; padding: 1rem; border: 1px solid var(--border); background: var(--bg-alt); }
+.account-order > header { display: flex; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+.account-order > header h3 { font-size: 1rem; overflow-wrap: anywhere; }
+.account-order > header p, .account-order > header strong { color: var(--text-muted); font-size: .82rem; }
+.account-order .checkout-products { padding: .5rem; }
+.account-order .checkout-item { grid-template-columns: minmax(0, 1fr) 90px max-content; }
+.account-order .checkout-order__quantity { text-align: left; }
+.account-order__totals { display: grid; gap: .35rem; }
+.account-order__totals div { display: flex; justify-content: space-between; gap: .75rem; color: var(--text-muted); font-size: .85rem; }
+.account-order__totals dd { margin: 0; text-align: right; }
+.account-order__totals div:last-child { padding-top: .5rem; border-top: 1px solid var(--border-soft); color: var(--text); font-weight: 700; }
+.admin-order-expand { padding: .55rem .75rem; white-space: nowrap; }
+.admin-order-expand:hover { border-color: var(--gold-dim); background: var(--gold-dim); color: var(--text); }
+.admin-order-products-row > td { padding: 0 !important; border: 0 !important; }
+.admin-order-products { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .3s var(--ease), opacity .2s ease; }
+.admin-order-products.is-open { grid-template-rows: 1fr; opacity: 1; }
+.admin-order-products__inner { min-height: 0; overflow: hidden; padding: 0 .75rem; transition: padding .2s ease; }
+.admin-order-products.is-open .admin-order-products__inner { padding-block: .75rem; }
+.admin-order-products .checkout-products { padding: .5rem; border-color: var(--border-soft); background: var(--bg-card); }
+.account-message { min-height: 1.5rem; margin-top: 1rem; color: var(--text-muted); }
+.account-message:empty { display: none; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+.react-header *, .react-home *, .react-admin *, .product-main *, .checkout-main * { letter-spacing: 0; }
+@keyframes react-reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 760px) {
+	.react-header__inner { gap: .5rem; }
+	.react-header .react-menu-toggle { display: inline-flex; }
+	.react-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; padding: 1rem 5%; background: var(--bg); border-bottom: 1px solid var(--border); flex-direction: column; align-items: flex-start; }
+	.react-nav.is-open { display: flex; }
+	.react-home .hero__content h1 { font-size: 2.75rem; }
+	.react-admin { display: block; }
+	.react-admin .admin-sidebar { position: static; width: 100%; height: auto; margin-top: var(--header-h); padding: 1rem; }
+	.react-admin .admin-nav { display: flex; overflow-x: auto; }
+	.react-admin .admin-nav button { width: auto; flex: 0 0 auto; }
+	.react-admin .admin-main { padding: calc(1.5rem + var(--header-h)) 1rem 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) { .react-review .review-card { animation: none; } }
