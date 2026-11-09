@@ -92,8 +92,8 @@ Este modo lee `backend/db/db.json` en el servidor, valida sus productos y los
 entrega mediante la misma API. No conecta ni escribe en MongoDB, ni modifica
 el JSON. Se activa exclusivamente con `--fixtures`; nunca se usa como fallback
 automático cuando falla la conexión a la base.
-Las cuentas, sesiones y carritos creados en este modo son temporales y se pierden al
-reiniciar el proceso.
+Las cuentas, sesiones, carritos, productos creados y sus imágenes se guardan en
+memoria en este modo y se pierden al reiniciar el proceso.
 
 ## Configurar MongoDB
 
@@ -204,7 +204,7 @@ válido y contraseña de 8–128 caracteres.
 
 Producto: `_id` (opcional; string, se genera uno si se omite), `is_new`
 (boolean), `name`, `imgSrc`, `imgSrcHover`, `alt` (strings), `price` (número
-finito mayor o igual a cero), `categories` (nombres) o `categoryIds` (IDs),
+finito mayor o igual a uno), `categories` (nombres) o `categoryIds` (IDs),
 `colors` y `size` (arreglos opcionales de strings). No se aceptan campos
 adicionales. Los productos devueltos incluyen `id`, `categories` y
 `categoryIds`. Un catálogo vacío devuelve `{ "items": {} }`.

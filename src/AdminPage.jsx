@@ -35,7 +35,7 @@ function ProductForm({ product, categories, busy, onSave }) {
         }, { image: data.get("image"), hoverImage: data.get("hoverImage") });
     }
     return <form className="admin-form" onSubmit={submit}>
-        {[["name", "Nombre", "text", 160], ["price", "Precio", "number"], ["alt", "Descripción de imagen", "text", 240]].map(([name, label, type, maxLength]) => <label className="admin-field" key={name}>{label}<input name={name} type={type} required maxLength={maxLength} min={type === "number" ? 0 : undefined} step={type === "number" ? "0.01" : undefined} defaultValue={product?.[name] ?? ""} /></label>)}
+        {[["name", "Nombre", "text", 160], ["price", "Precio", "number"], ["alt", "Descripción de imagen", "text", 240]].map(([name, label, type, maxLength]) => <label className="admin-field" key={name}>{label}<input name={name} type={type} required maxLength={maxLength} min={type === "number" ? 1 : undefined} step={type === "number" ? "0.01" : undefined} defaultValue={product?.[name] ?? ""} /></label>)}
         <ProductImageField name="image" label="Imagen principal" currentImage={product?.imgSrc} required={!product} />
         <ProductImageField name="hoverImage" label="Imagen alternativa" currentImage={product?.imgSrcHover} required={!product} />
         <fieldset className="admin-fieldset"><legend>Categorías</legend><div className="admin-option-list">{categories.map(category => <label className="admin-option" key={category.id}><input type="checkbox" name="categoryIds" value={category.id} defaultChecked={product?.categoryIds?.includes(category.id) || false} />{category.name}</label>)}{!categories.length && <p>No hay categorías disponibles.</p>}</div></fieldset>
