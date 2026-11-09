@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { aplicarFiltros, construirFiltros } from "../backend/filter_products.js";
-import { imagenProducto, obtenerProductos } from "./services/products.js";
+import { construirFiltros } from "../backend/filter_products.js";
+import { imagenProducto, obtenerPaginaProductos } from "./services/products.js";
 
 const moneda = new Intl.NumberFormat("es-UY", { style: "currency", currency: "UYU" });
 const categorias = ["abrigos", "calzado", "camisas", "camisetas", "chalecos", "pantalones", "vestidos", "accesorios"];
@@ -75,34 +75,79 @@ function Producto({ producto }) {
 }
 
 export default function App() {
-    const [productos, setProductos] = useState([]);
-    const [estado, setEstado] = useState("loading");
+    const [catalogo, setCatalogo] = useState({
+        consulta: null, productos: [], pagina: 1, total: 0,
+        hayMas: false, minimo: 0, maximo: 0, estado: "loading", errorMas: ""
+    });
     const [intento, setIntento] = useState(0);
+    const [cargandoMas, setCargandoMas] = useState(false);
+    const masController = useRef(null);
     const [parametros, setParametros] = useSearchParams();
     const consulta = parametros.toString();
 
     useEffect(() => {
         const controller = new AbortController();
-        obtenerProductos(controller.signal).then(datos => {
-            setProductos(datos);
-            setEstado("ready");
+        masController.current?.abort();
+        obtenerPaginaProductos(new URLSearchParams(consulta), 1, controller.signal).then(datos => {
+            setCatalogo({
+                consulta,
+                productos: datos.products,
+                pagina: datos.page,
+                total: datos.total,
+                hayMas: datos.hasMore,
+                minimo: datos.minPrice,
+                maximo: datos.maxPrice,
+                estado: "ready",
+                errorMas: ""
+            });
+            setCargandoMas(false);
         }).catch(error => {
-            if (error.name !== "AbortError") setEstado("error");
+            if (error.name !== "AbortError") {
+                setCatalogo(previous => ({
+                    ...previous, consulta, productos: [], total: 0, hayMas: false, estado: "error"
+                }));
+            }
         });
-        return () => controller.abort();
-    }, [intento]);
+        return () => {
+            controller.abort();
+            masController.current?.abort();
+        };
+    }, [consulta, intento]);
 
-    const minimo = productos.length ? Math.min(...productos.map(producto => Number(producto.price))) : 0;
-    const maximo = productos.length ? Math.max(...productos.map(producto => Number(producto.price))) : 0;
+    const datosActuales = catalogo.consulta === consulta;
+    const productos = datosActuales ? catalogo.productos : [];
+    const estado = datosActuales ? catalogo.estado : "loading";
+    const minimo = datosActuales ? catalogo.minimo : 0;
+    const maximo = datosActuales ? catalogo.maximo : 0;
     const filtros = construirFiltros(parametros, minimo, maximo);
-    const filtrados = aplicarFiltros(productos, filtros);
     const orden = parametros.get("sort") || "newest";
-    const ordenados = [...filtrados].sort((a, b) => {
-        if (orden === "price-asc") return Number(a.price) - Number(b.price);
-        if (orden === "price-desc") return Number(b.price) - Number(a.price);
-        if (orden === "newest") return Number(b.is_new) - Number(a.is_new);
-        return 0;
-    });
+
+    async function cargarMas() {
+        if (cargandoMas || !catalogo.hayMas || catalogo.consulta !== consulta) return;
+        const controller = new AbortController();
+        masController.current = controller;
+        setCargandoMas(true);
+        setCatalogo(previous => previous.consulta === consulta ? { ...previous, errorMas: "" } : previous);
+        try {
+            const datos = await obtenerPaginaProductos(new URLSearchParams(consulta), catalogo.pagina + 1, controller.signal);
+            if (!controller.signal.aborted) {
+                setCatalogo(previous => previous.consulta === consulta ? {
+                    ...previous,
+                    productos: [...previous.productos, ...datos.products],
+                    pagina: datos.page,
+                    total: datos.total,
+                    hayMas: datos.hasMore
+                } : previous);
+            }
+        } catch (error) {
+            if (error.name !== "AbortError") {
+                setCatalogo(previous => previous.consulta === consulta
+                    ? { ...previous, errorMas: error.message } : previous);
+            }
+        } finally {
+            setCargandoMas(false);
+        }
+    }
 
     function filtrar(evento) {
         evento.preventDefault();
@@ -173,10 +218,13 @@ export default function App() {
                 </div>
                 <div className="product-grid" id="product-grid" aria-busy={estado === "loading"}>
                     {estado === "loading" && <p role="status">Cargando productos...</p>}
-                    {estado === "error" && <div role="alert"><p>No se pudieron cargar los productos.</p><button type="button" className="btn btn--outline" onClick={() => { setEstado("loading"); setIntento(intento + 1); }}>Reintentar</button></div>}
-                    {estado === "ready" && ordenados.map(producto => <Producto key={producto.id} producto={producto} />)}
-                    {estado === "ready" && ordenados.length === 0 && <p>No se encontraron productos.</p>}
+                    {estado === "error" && <div role="alert"><p>No se pudieron cargar los productos.</p><button type="button" className="btn btn--outline" onClick={() => { setCatalogo(previous => ({ ...previous, estado: "loading" })); setIntento(value => value + 1); }}>Reintentar</button></div>}
+                    {estado === "ready" && productos.map(producto => <Producto key={producto.id} producto={producto} />)}
+                    {estado === "ready" && productos.length === 0 && <p>No se encontraron productos.</p>}
                 </div>
+                {estado === "ready" && catalogo.hayMas && <button type="button" className="btn btn--outline catalog-load-more" onClick={cargarMas} disabled={cargandoMas}>{cargandoMas ? "Cargando..." : "Cargar más"}</button>}
+                {estado === "ready" && catalogo.errorMas && <p role="alert" className="catalog-load-more-error">{catalogo.errorMas}</p>}
+                {estado === "ready" && productos.length > 0 && <p className="catalog-results-count">Mostrando {productos.length} de {catalogo.total} productos</p>}
             </section>
         </div>
     </main>;

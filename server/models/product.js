@@ -10,6 +10,8 @@ const productSchema = new mongoose.Schema({
     price: { type: Number, required: true, min: 0, validate: Number.isFinite },
     imgSrc: { type: String, required: true },
     imgSrcHover: { type: String, required: true },
+    imgFileId: { type: mongoose.Schema.Types.ObjectId },
+    imgHoverFileId: { type: mongoose.Schema.Types.ObjectId },
     alt: { type: String, required: true },
     colors: { type: [String], default: [] },
     size: {

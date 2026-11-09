@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Readable } from "node:stream";
 import { createApp } from "./app.js";
 import { conectarDB } from "./db.js";
 import { migrarCategoriasLegadas, leerProductosIniciales } from "./fixtures.js";
@@ -22,12 +23,23 @@ async function iniciarServidor() {
         const carritos = new Map();
         const cupones = [];
         const ordenes = [];
+        const imagenes = new Map();
         const productos = iniciales.map(({ categories: nombres, ...producto }) =>
             new Product({
                 ...producto,
                 categoryIds: nombres.map(name => idPorNombre.get(name))
             }).toObject()
         );
+        function filtrarProductos(filter) {
+            return productos.filter(producto =>
+                producto.price >= filter.price.$gte && producto.price <= filter.price.$lte &&
+                (!filter.categoryIds || filter.categoryIds.$in.some(id =>
+                    producto.categoryIds.some(categoryId => String(categoryId) === String(id)))) &&
+                (!filter.colors || filter.colors.$in.some(pattern =>
+                    producto.colors.some(color => pattern.test(color)))) &&
+                (!filter.size || filter.size.$in.some(size => producto.size.includes(size)))
+            );
+        }
         app = createApp({
             leerCarrito: async userId => {
                 const key = String(userId);
@@ -68,6 +80,34 @@ async function iniciarServidor() {
                 return order;
             },
             listarProductos: async () => productos,
+            listarProductosPaginados: async (filter, sort, skip, limit) => filtrarProductos(filter)
+                .sort((left, right) => {
+                    for (const [field, direction] of Object.entries(sort)) {
+                        const a = field === "_id" ? String(left._id) : left[field];
+                        const b = field === "_id" ? String(right._id) : right[field];
+                        if (a < b) return -direction;
+                        if (a > b) return direction;
+                    }
+                    return 0;
+                })
+                .slice(skip, skip + limit),
+            contarProductos: async filter => filtrarProductos(filter).length,
+            rangoPreciosProductos: async () => productos.length
+                ? [{ min: Math.min(...productos.map(product => product.price)), max: Math.max(...productos.map(product => product.price)) }]
+                : [],
+            guardarImagen: async (buffer, filename, contentType) => {
+                const id = new mongoose.Types.ObjectId();
+                imagenes.set(String(id), { buffer: Buffer.from(buffer), filename, contentType });
+                return id;
+            },
+            obtenerImagen: async id => {
+                const image = imagenes.get(String(id));
+                return image ? {
+                    contentType: image.contentType,
+                    stream: Readable.from([image.buffer])
+                } : null;
+            },
+            eliminarImagen: async id => { imagenes.delete(String(id)); },
             buscarProducto: async id => productos.find(producto => producto._id === id),
             crearProducto: async producto => {
                 const documento = producto.toObject();

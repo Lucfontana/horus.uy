@@ -194,9 +194,11 @@ válido y contraseña de 8–128 caracteres.
 | Método | Ruta | Acceso | Cuerpo | Respuesta |
 | --- | --- | --- | --- | --- |
 | GET | `/api/products` | Público | — | `200`, `{ "items": { "ID": { ...producto } } }` |
+| GET | `/api/products?page=1&limit=12` | Público | Filtros opcionales `category`, `color`, `size`, `minPrice`, `maxPrice` y `sort` | `200`, hasta 12 productos y metadatos de paginación |
 | GET | `/api/products/:id` | Público | — | `200`, producto; `404` si no existe |
-| POST | `/api/products` | Admin | Producto completo | `201`, producto creado; `409` si el ID ya existe |
-| PATCH | `/api/products/:id` | Admin | Uno o más campos del producto | `200`, producto actualizado; `404` si no existe |
+| GET | `/api/products/images/:id` | Público | — | Imagen almacenada en GridFS |
+| POST | `/api/products` | Admin | JSON de producto o `multipart/form-data` con `product`, `image` y `hoverImage` | `201`, producto creado; `409` si el ID ya existe |
+| PATCH | `/api/products/:id` | Admin | Campos del producto y archivos opcionales `image` / `hoverImage` | `200`, producto actualizado; `404` si no existe |
 | DELETE | `/api/products/:id` | Admin | — | `200`, `{ "id" }`; `404` si no existe |
 | POST | `/api/products/:id/variants` | Público | `{ "color", "size" }` | `200`, `{ "valid": true }`; `400` si la variante no está disponible |
 
@@ -206,6 +208,11 @@ finito mayor o igual a cero), `categories` (nombres) o `categoryIds` (IDs),
 `colors` y `size` (arreglos opcionales de strings). No se aceptan campos
 adicionales. Los productos devueltos incluyen `id`, `categories` y
 `categoryIds`. Un catálogo vacío devuelve `{ "items": {} }`.
+El catálogo React solicita 12 productos por página y conserva los filtros y
+orden al usar «Cargar más». El formulario de administración acepta JPEG, PNG y
+WebP de hasta 5 MB por imagen; los archivos se almacenan en GridFS y se eliminan
+al reemplazar o borrar el producto. Las cargas requieren MongoDB; los productos
+existentes que usan URLs continúan siendo compatibles.
 
 ### Categorías
 

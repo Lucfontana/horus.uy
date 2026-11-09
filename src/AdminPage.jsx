@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, List, Tags, Save } from "lucide-react";
 import { solicitar } from "./services/api.js";
 import OrderItems from "./OrderItems.jsx";
+import { imagenProducto } from "./services/products.js";
 
 const sizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 const orderStatuses = ["Orden recibida", "Procesando", "Enviado", "Finalizado", "Descartado"];
@@ -28,20 +29,36 @@ function ProductForm({ product, categories, busy, onSave }) {
         const data = new FormData(event.currentTarget);
         onSave({
             name: data.get("name").trim(), price: Number(data.get("price")),
-            imgSrc: data.get("imgSrc").trim(), imgSrcHover: data.get("imgSrcHover").trim(),
             alt: data.get("alt").trim(), categoryIds: data.getAll("categoryIds"),
             colors: data.get("colors").split(",").map(value => value.trim()).filter(Boolean),
             size: data.getAll("size"), is_new: data.has("is_new")
-        });
+        }, { image: data.get("image"), hoverImage: data.get("hoverImage") });
     }
     return <form className="admin-form" onSubmit={submit}>
-        {[["name", "Nombre", "text", 160], ["price", "Precio", "number"], ["imgSrc", "Imagen principal", "text"], ["imgSrcHover", "Imagen alternativa", "text"], ["alt", "Descripción de imagen", "text", 240]].map(([name, label, type, maxLength]) => <label className="admin-field" key={name}>{label}<input name={name} type={type} required maxLength={maxLength} min={type === "number" ? 0 : undefined} step={type === "number" ? "0.01" : undefined} defaultValue={product?.[name] ?? ""} /></label>)}
+        {[["name", "Nombre", "text", 160], ["price", "Precio", "number"], ["alt", "Descripción de imagen", "text", 240]].map(([name, label, type, maxLength]) => <label className="admin-field" key={name}>{label}<input name={name} type={type} required maxLength={maxLength} min={type === "number" ? 0 : undefined} step={type === "number" ? "0.01" : undefined} defaultValue={product?.[name] ?? ""} /></label>)}
+        <ProductImageField name="image" label="Imagen principal" currentImage={product?.imgSrc} required={!product} />
+        <ProductImageField name="hoverImage" label="Imagen alternativa" currentImage={product?.imgSrcHover} required={!product} />
         <fieldset className="admin-fieldset"><legend>Categorías</legend><div className="admin-option-list">{categories.map(category => <label className="admin-option" key={category.id}><input type="checkbox" name="categoryIds" value={category.id} defaultChecked={product?.categoryIds?.includes(category.id) || false} />{category.name}</label>)}{!categories.length && <p>No hay categorías disponibles.</p>}</div></fieldset>
         <label className="admin-field">Colores<input name="colors" placeholder="Negro, Azul" defaultValue={product?.colors?.join(", ") || ""} /></label>
         <fieldset className="admin-fieldset"><legend>Talles</legend><div className="admin-option-list">{sizes.map(size => <label className="admin-option" key={size}><input type="checkbox" name="size" value={size} defaultChecked={product?.size?.includes(size) || false} />{size}</label>)}</div></fieldset>
         <label className="admin-checkbox"><input type="checkbox" name="is_new" defaultChecked={product?.is_new || false} />Producto nuevo</label>
         <div className="admin-form-actions"><button className="admin-button" disabled={busy}><Save size={16} aria-hidden="true" />{busy ? "Guardando..." : "Guardar producto"}</button></div>
     </form>;
+}
+
+function ProductImageField({ name, label, currentImage, required }) {
+    const [preview, setPreview] = useState(currentImage ? imagenProducto(currentImage) : "");
+    useEffect(() => () => {
+        if (preview.startsWith("blob:")) URL.revokeObjectURL(preview);
+    }, [preview]);
+    return <label className="admin-field admin-product-image">{label}
+        <input name={name} type="file" accept="image/jpeg,image/png,image/webp" required={required} onChange={event => {
+            const file = event.target.files?.[0];
+            setPreview(file ? URL.createObjectURL(file) : currentImage ? imagenProducto(currentImage) : "");
+        }} />
+        <small>JPEG, PNG o WebP; máximo 5 MB.</small>
+        {preview && <img className="admin-product-image__preview" src={preview} alt={`Vista previa: ${label.toLowerCase()}`} />}
+    </label>;
 }
 
 export default function AdminPage() {
@@ -61,12 +78,21 @@ export default function AdminPage() {
         return () => controller.abort();
     }, []);
 
-    async function mutate(url, method, body) {
+    async function mutate(url, method, body, images) {
         if (busy) return;
         setBusy(true);
         setMessage("");
         try {
-            await solicitar(url, { method, ...(body ? { body: JSON.stringify(body) } : {}) });
+            let requestBody;
+            if (images) {
+                requestBody = new FormData();
+                requestBody.append("product", JSON.stringify(body));
+                if (images.image instanceof File && images.image.size > 0) requestBody.append("image", images.image);
+                if (images.hoverImage instanceof File && images.hoverImage.size > 0) requestBody.append("hoverImage", images.hoverImage);
+            } else if (body) {
+                requestBody = JSON.stringify(body);
+            }
+            await solicitar(url, { method, ...(requestBody ? { body: requestBody } : {}) });
             const result = await loadData();
             setData(result);
             setRevision(value => value + 1);
@@ -89,8 +115,8 @@ export default function AdminPage() {
             {status === "ready" && <section className="admin-panel"><h2>{views.find(([name]) => name === view)[1]}</h2>
                 {view === "products" && <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Categorías</th><th>Variantes</th></tr></thead><tbody>{data.products.map(item => <tr key={item.id}><td>{item.id}</td><td>{item.name}</td><td>{currency.format(item.price)}</td><td>{item.categories.join(", ")}</td><td>{item.colors.join(", ")} / {item.size.join(", ")}</td></tr>)}</tbody></table>{!data.products.length && <p>No hay productos.</p>}</div>}
                 {(view === "edit" || view === "delete") && <label className="admin-field">Producto<select value={selected} disabled={busy} onChange={event => setSelected(event.target.value)}><option value="">Seleccioná un producto</option>{data.products.map(item => <option key={item.id} value={item.id}>{item.id} · {item.name}</option>)}</select></label>}
-                {view === "add" && <ProductForm key={`new:${revision}`} categories={data.categories} busy={busy} onSave={fields => mutate("/api/products", "POST", fields)} />}
-                {view === "edit" && product && <ProductForm key={`${product.id}:${revision}`} product={product} categories={data.categories} busy={busy} onSave={fields => mutate(`/api/products/${encodeURIComponent(product.id)}`, "PATCH", fields)} />}
+                {view === "add" && <ProductForm key={`new:${revision}`} categories={data.categories} busy={busy} onSave={(fields, images) => mutate("/api/products", "POST", fields, images)} />}
+                {view === "edit" && product && <ProductForm key={`${product.id}:${revision}`} product={product} categories={data.categories} busy={busy} onSave={(fields, images) => mutate(`/api/products/${encodeURIComponent(product.id)}`, "PATCH", fields, images)} />}
                 {view === "delete" && product && <button className="admin-button admin-button--danger" type="button" disabled={busy} onClick={async () => { if (window.confirm(`¿Eliminar "${product.name}"? Esta acción no se puede deshacer.`) && await mutate(`/api/products/${encodeURIComponent(product.id)}`, "DELETE")) setSelected(""); }}><Trash2 size={16} aria-hidden="true" />Eliminar producto</button>}
                 {view === "categories" && <>
                     <form key={revision} className="admin-form" onSubmit={event => { event.preventDefault(); mutate("/api/categories", "POST", { name: new FormData(event.currentTarget).get("name").trim() }); }}><label className="admin-field">Nombre de categoría<input name="name" required maxLength="80" /></label><div className="admin-form-actions"><button className="admin-button" disabled={busy}><Plus size={16} aria-hidden="true" />Agregar categoría</button></div></form>
