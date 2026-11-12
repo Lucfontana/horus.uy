@@ -14,7 +14,6 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint src vite.config.js eslint.config.js backend/filter_products.js",
-    "demo": "node --env-file-if-exists=.env server/server.js --fixtures",
     "seed": "node --env-file-if-exists=.env server/seed.js",
     "test": "node --test server/*.test.js"
   },
@@ -33,6 +32,7 @@
     "express": "^5.3.0",
     "lucide-react": "^1.61.0",
     "mongoose": "^9.11.1",
+    "multer": "^2.5.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.4"

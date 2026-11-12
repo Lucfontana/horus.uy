@@ -1,7 +1,11 @@
 export async function solicitar(url, opciones = {}) {
+    const esMultipart = opciones.body instanceof FormData;
     const respuesta = await fetch(url, {
         ...opciones,
-        headers: { "Content-Type": "application/json", ...opciones.headers }
+        headers: {
+            ...(!esMultipart ? { "Content-Type": "application/json" } : {}),
+            ...opciones.headers
+        }
     });
     const datos = respuesta.status === 204 ? null : await respuesta.json();
     if (!respuesta.ok) {

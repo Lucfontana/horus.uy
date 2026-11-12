@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { HashRouter, Link, Navigate, NavLink, Route, Routes, useLocation } from "react-router-dom";
+import { HashRouter, Link, Navigate, NavLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { LogOut, Menu, Moon, ShoppingBag, Sun, UserRound, X } from "lucide-react";
 import Catalog from "./App.jsx";
 import HomePage from "./HomePage.jsx";
 import ProductPage from "./ProductPage.jsx";
 import CheckoutPage from "./CheckoutPage.jsx";
+import ShippingPage from "./ShippingPage.jsx";
 import AdminPage from "./AdminPage.jsx";
 import AccountPage from "./AccountPage.jsx";
 import Cart from "./Cart.jsx";
@@ -17,6 +18,7 @@ const currency = new Intl.NumberFormat("es-UY", { style: "currency", currency: "
 
 function Site() {
     const location = useLocation();
+    const navigate = useNavigate();
     const [cartOpen, setCartOpen] = useState(false);
     const [assistantOpen, setAssistantOpen] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -133,11 +135,14 @@ function Site() {
         catch (error) { console.error("No se pudo notificar el cambio de sesión a otras pestañas:", error); }
     }
 
-    function authenticated(user) {
+    function authenticated(user, checkout) {
         setAuth({ status: "ready", user });
         setAccountMessage("");
         closeNavigation();
         notifySessionChanged();
+        if (checkout?.path === "/datos-envio") {
+            navigate(checkout.path, { replace: true, state: { couponCode: checkout.couponCode || "" } });
+        }
     }
 
     function closeNavigation() {
@@ -188,8 +193,15 @@ function Site() {
             <Route path="/inicio" element={<HomePage onOpenAssistant={() => setAssistantOpen(true)} />} />
             <Route path="/catalogo" element={<Catalog />} />
             <Route path="/producto" element={<ProductPage add={cart.add} />} />
-            <Route path="/carrito" element={<CheckoutPage entries={entries} update={update} status={status} />} />
-            <Route path="/checkout" element={<CheckoutPage entries={entries} update={update} status={status} />} />
+            <Route path="/carrito" element={<CheckoutPage entries={entries} update={update} status={status} auth={auth} />} />
+            <Route path="/checkout" element={<CheckoutPage entries={entries} update={update} status={status} auth={auth} />} />
+            <Route path="/datos-envio" element={auth.status === "loading"
+                ? <main className="account-page"><p role="status">Verificando tu sesión...</p></main>
+                : auth.status === "error"
+                    ? <main className="account-page"><p role="alert">No se pudo verificar tu sesión. Recargá la página para volver a intentar.</p></main>
+                    : auth.user
+                        ? <ShippingPage entries={entries} status={status} synchronize={cart.synchronize} />
+                        : <Navigate to="/login" replace state={{ checkout: { path: "/datos-envio", couponCode: location.state?.couponCode || "" } }} />} />
             <Route path="/cuenta" element={<AccountPage auth={auth} onAuthenticated={authenticated} />} />
             <Route path="/login" element={<AccountPage auth={auth} onAuthenticated={authenticated} initialMode="login" />} />
             <Route path="/registro" element={<AccountPage auth={auth} onAuthenticated={authenticated} initialMode="register" />} />
