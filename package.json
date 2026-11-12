@@ -14,7 +14,6 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint src vite.config.js eslint.config.js backend/filter_products.js",
-    "demo": "node --env-file-if-exists=.env server/server.js --fixtures",
     "seed": "node --env-file-if-exists=.env server/seed.js",
     "test": "node --test server/*.test.js"
   },

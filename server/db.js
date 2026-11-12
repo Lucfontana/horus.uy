@@ -10,6 +10,6 @@ export async function conectarDB(uri = process.env.MONGODB_URI) {
             connectTimeoutMS: 5000
         });
     } catch {
-        throw new Error("No se pudo conectar a MongoDB. Revisá la URI, las credenciales y el acceso de red. Para probar sin MongoDB, usá npm run demo.");
+        throw new Error("No se pudo conectar a MongoDB. Revisá la URI, las credenciales y el acceso de red.");
     }
 }

@@ -17,36 +17,33 @@ recargas y enlaces directos sin cambiar las rutas de la API:
 | Cuenta | `/react/#/cuenta` |
 | Administración | `/react/#/administracion` |
 
-Las páginas originales siguen disponibles en `/frontend/` como referencia.
-React reutiliza las hojas de estilo originales, los filtros y la persistencia
-del carrito. No importa los scripts antiguos que renderizan el DOM. Los servicios
-de `src/services/` consultan la misma API Express.
+React reutiliza las hojas de estilo, los filtros y la persistencia del carrito.
+Los servicios de `src/services/` consultan la API Express.
 
 Producto conserva la validación de variantes por API. Drawer y checkout comparten
 estado, sincronizan cambios entre pestañas y contrastan las variantes y precios
 con el catálogo al navegar. Las variantes que ya no existen no se muestran.
-Administración permite listar, crear, editar y eliminar productos y categorías;
-requiere una sesión de administrador. Las escrituras necesitan MongoDB, no el
-modo de demostración.
+Administración permite listar, crear, editar y eliminar productos, categorías
+y cupones; requiere una sesión de administrador. Las escrituras necesitan MongoDB.
 
-No hay todavía API de pedidos, pagos, cupones ni contacto. Las vistas lo indican
-al intentar esas acciones y no simulan operaciones exitosas.
+El perfil muestra las órdenes y su estado. Las compras se coordinan por WhatsApp;
+no se procesa ningún pago en línea.
 
-Desde `horus.uy/`, iniciá Express en una terminal:
+Para desarrollo, iniciá Express en una terminal:
 
 ```bash
-npm run demo
+npm run dev:server
 ```
 
-O usá `npm run dev:server` para conectar MongoDB con las variables de `.env`.
-En otra terminal iniciá Vite:
+El servidor requiere una conexión MongoDB configurada en `.env`. En otra terminal
+iniciá Vite:
 
 ```bash
 npm run dev
 ```
 
 Abrí `http://localhost:5173/react/` (o el puerto que indique Vite). El proxy
-envía `/api`, `/frontend` y `/backend` a Express en el puerto 3000. No expongas
+envía `/api` y `/frontend` a Express en el puerto 3000. No expongas
 credenciales de MongoDB en variables `VITE_*`: son públicas en el navegador.
 
 ```bash
@@ -54,17 +51,15 @@ npm run lint
 npm run build
 ```
 
-ESLint revisa `src/`, las configuraciones nuevas y el módulo de filtros
-reutilizado; aún no cubre todos los scripts antiguos ni el servidor. El build
-se genera en `dist/` y Express lo sirve en `http://localhost:3000/react/`.
-Los recursos y páginas antiguas siguen siendo servidos por Express.
+ESLint revisa `src/`, las configuraciones y el módulo de filtros compartido.
+El build se genera en `dist/` y Express lo sirve en `http://localhost:3000/react/`.
 `npm run preview` previsualiza solamente el build; para usar la API y recursos
 existentes, comprobá el build desde Express.
 
 ## Requisitos
 
 - Node.js 22.16 o superior y npm.
-- MongoDB local o un cluster de MongoDB Atlas, solo para el modo MongoDB.
+- MongoDB local o un cluster de MongoDB Atlas.
 - Ejecutar todos los comandos siguientes desde `horus.uy/`.
 
 ## Instalación
@@ -73,27 +68,8 @@ existentes, comprobá el build desde Express.
 npm install
 ```
 
-Express sirve la web y la API desde el mismo origen. No uses Live Server ni
-el servidor estático de Python para esta versión: no ofrecen `/api/products`.
-
-## Probar sin MongoDB
-
-La URI actual de `.env` es un placeholder. Mientras no tengas una conexión
-válida, ejecutá:
-
-```bash
-npm run demo
-```
-
-Abrí <http://localhost:3000/frontend/catalogo.html>. El checkout está en
-<http://localhost:3000/frontend/checkout.html>.
-
-Este modo lee `backend/db/db.json` en el servidor, valida sus productos y los
-entrega mediante la misma API. No conecta ni escribe en MongoDB, ni modifica
-el JSON. Se activa exclusivamente con `--fixtures`; nunca se usa como fallback
-automático cuando falla la conexión a la base.
-Las cuentas, sesiones, carritos, productos creados y sus imágenes se guardan en
-memoria en este modo y se pierden al reiniciar el proceso.
+Express sirve la aplicación React, sus recursos y la API desde el mismo origen.
+No uses Live Server ni el servidor estático de Python: no ofrecen `/api/products`.
 
 ## Configurar MongoDB
 
@@ -157,7 +133,7 @@ npm start
 `npm run dev:server` y `npm start` cargan `.env` y conectan MongoDB antes de abrir el puerto HTTP.
 Si la URI es inválida o la base no está disponible, terminan con un error;
 no sustituyen los datos por placeholders. Si el puerto está ocupado, cambiá
-`PORT` en `.env` o ejecutá `PORT=3001 npm run demo` en Linux.
+`PORT` en `.env` o ejecutá `PORT=3001 npm run dev:server` en Linux.
 
 ## API
 
@@ -255,12 +231,11 @@ siguiente usuario del dispositivo.
 ## Organización
 
 - `server/`: aplicación Express, conexión, modelo, seed y pruebas de Node.
-- `frontend/`: páginas, estilos e imágenes; servido en `/frontend`.
-- `backend/`: módulos existentes del navegador, aunque su nombre sea backend.
-	Express publica solamente los JavaScript autorizados; no publica el JSON,
-	el código del servidor, `.env` ni la raíz del repositorio.
-- `backend/load_products.js`: carga `/api/products` y conserva la API compartida
-	`obtenerProductos()`, el filtrado local y la presentación del catálogo.
+- `src/`: interfaz React, páginas y servicios del cliente.
+- `frontend/styles/` y `frontend/src/`: estilos e imágenes usados por React;
+	Express los sirve bajo `/frontend/`.
+- `backend/`: utilidades compartidas de filtros y persistencia del carrito, más
+	`db/db.json`, que alimenta el seed y las pruebas. Express no publica este directorio.
 
 El tema mantiene su persistencia local. El carrito de invitado sigue usando
 `localStorage`; los carritos de cuentas se guardan en MongoDB. Los cupones y

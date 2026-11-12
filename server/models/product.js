@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
     is_new: { type: Boolean, required: true },
     name: { type: String, required: true },
     categoryIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
-    price: { type: Number, required: true, min: 0, validate: Number.isFinite },
+    price: { type: Number, required: true, min: 1, validate: Number.isFinite },
     imgSrc: { type: String, required: true },
     imgSrcHover: { type: String, required: true },
     imgFileId: { type: mongoose.Schema.Types.ObjectId },

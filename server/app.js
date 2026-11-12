@@ -24,12 +24,6 @@ import {
 } from "./auth.js";
 
 const frontendDirectory = fileURLToPath(new URL("../frontend/", import.meta.url));
-const browserScriptsDirectory = fileURLToPath(new URL("../backend/", import.meta.url));
-const browserScripts = new Set([
-    "calculos.js", "carrito.js", "carrusel_resenas.js", "cart_storage.js",
-    "catalogo.js", "checkout.js", "filter_products.js", "load_products.js",
-    "navbar.js", "panel_admin-logica.js", "theme.js"
-]);
 const chatWindowMs = 60 * 60 * 1000;
 const chatRateLimits = new Map();
 const chatKnowledgeUrl = new URL("../conocimiento.txt", import.meta.url);
@@ -869,13 +863,9 @@ export function createApp({
         return response.status(200).json({ valid: true });
     });
 
-    app.get("/", (request, response) => response.redirect("/frontend/index.html"));
+    app.get("/", (request, response) => response.redirect("/react/"));
     app.use("/react", express.static(fileURLToPath(new URL("../dist/", import.meta.url)), { dotfiles: "deny" }));
     app.use("/frontend", express.static(frontendDirectory, { dotfiles: "deny" }));
-    app.get("/backend/:filename", (request, response, next) => {
-        if (!browserScripts.has(request.params.filename)) return next();
-        response.sendFile(request.params.filename, { root: browserScriptsDirectory });
-    });
 
     app.use((request, response) => {
         response.status(404).json({ error: "Ruta no encontrada." });
